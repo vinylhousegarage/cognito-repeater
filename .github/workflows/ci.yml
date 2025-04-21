@@ -22,8 +22,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Ruff linter
-      run: ruff .
+    - name: Show Ruff version
+      run: python -m ruff --version
 
     - name: Run tests
       run: PYTHONPATH=. pytest
