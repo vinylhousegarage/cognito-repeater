@@ -22,12 +22,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Show Ruff version
-      run: python -m ruff --version
-
-    - name: Check Ruff path
-      run: which ruff
-
     - name: Run Ruff linter
       run: python -m ruff check .
 
