@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
-from app.main import app
+from app import create_app
 
+app = create_app()
 client = TestClient(app)
 
 @pytest.mark.parametrize('path,expected_status', [
