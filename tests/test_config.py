@@ -1,6 +1,3 @@
-import os
-import pytest
-
 from app.config import Config
 
 def test_config_returns_environment_variables(monkeypatch):
