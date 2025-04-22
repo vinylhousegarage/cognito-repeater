@@ -7,8 +7,9 @@ async def test_fetch_cognito_metadata(httpx_mock):
         'token_endpoint': 'https://example.com/oauth2/token'
     }
 
+    config = Config()
     httpx_mock.add_response(
-        url=Config.AWS_COGNITO_METADATA_URL,
+        url=config.AWS_COGNITO_METADATA_URL,
         json=dummy_metadata
     )
 
