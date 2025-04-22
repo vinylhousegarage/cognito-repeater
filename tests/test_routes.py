@@ -14,5 +14,5 @@ client = TestClient(app)
     ('/not-exist', 404),
 ])
 def test_routes_status_code(path, expected_status):
-    response = client.get(path)
+    response = client.get(path, follow_redirects=False)
     assert response.status_code == expected_status
