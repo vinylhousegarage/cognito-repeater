@@ -1,10 +1,11 @@
 from fastapi import APIRouter
+from app.utils.auth_helpers import redirect_to_cognito_login
 
 router = APIRouter()
 
 @router.get('/login')
 def login():
-    return {'url': 'https://login'}
+    return redirect_to_cognito_login()
 
 @router.get('/callback')
 def callback():
