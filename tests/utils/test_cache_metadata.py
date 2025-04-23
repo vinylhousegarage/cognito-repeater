@@ -1,6 +1,5 @@
 import app.utils.auth_helpers as auth_helpers
 from types import SimpleNamespace
-from app.utils.auth_helpers import cache_cognito_metadata
 
 async def test_cache_cognito_metadata(monkeypatch):
     dummy_metadata = {
@@ -18,9 +17,9 @@ async def test_cache_cognito_metadata(monkeypatch):
     app.state.config = SimpleNamespace()
     app.state.config.AWS_COGNITO_METADATA_URL = 'https://fake-url'
 
-    metadata = await cache_cognito_metadata(app)
+    metadata = await auth_helpers.cache_cognito_metadata(app)
     assert metadata == dummy_metadata
     assert app.state.metadata == dummy_metadata
 
-    second_metadata = await cache_cognito_metadata(app)
+    second_metadata = await auth_helpers.cache_cognito_metadata(app)
     assert second_metadata is metadata
