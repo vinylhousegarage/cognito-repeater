@@ -1,5 +1,21 @@
 import app.utils.auth_helpers as auth_helpers
+from httpx import AsyncClient
+from pytest_httpx import HTTPXMock
 from types import SimpleNamespace
+
+async def test_fetch_cognito_metadata(httpx_mock: HTTPXMock, async_client: AsyncClient) -> None:
+    dummy_metadata = {
+        'authorization_endpoint': 'https://example.com/oauth2/authorize',
+        'token_endpoint': 'https://example.com/oauth2/token'
+    }
+
+    dummy_url = 'https://example.com/.well-known/openid-configuration'
+
+    httpx_mock.add_response(url=dummy_url, json=dummy_metadata)
+
+    result = await auth_helpers.fetch_cognito_metadata(async_client, dummy_url)
+
+    assert result == dummy_metadata
 
 async def test_cache_cognito_metadata(monkeypatch):
     dummy_metadata = {
