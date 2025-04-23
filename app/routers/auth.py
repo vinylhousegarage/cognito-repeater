@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
-from app.utils.auth_helpers import exchange_token, redirect_to_cognito_login
+from app.utils.auth_helpers import redirect_to_cognito_login
+from app.utils.token_helpers import exchange_token
 
 router = APIRouter()
 
