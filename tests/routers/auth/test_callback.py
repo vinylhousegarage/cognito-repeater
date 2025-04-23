@@ -1,4 +1,4 @@
-import app.utils.auth_helpers
+import app.utils.token_helpers
 from httpx import AsyncClient
 
 async def test_callback_missing_code(app_client: AsyncClient):
@@ -19,7 +19,7 @@ async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
             'refresh_token': 'dummy',
         }
 
-    monkeypatch.setattr(app.utils.auth_helpers, 'exchange_token', fake_exchange_token)
+    monkeypatch.setattr(app.utils.token_helpers, 'exchange_token', fake_exchange_token)
 
     response = await app_client.get('/callback?code=abc123')
     assert response.status_code == 200
