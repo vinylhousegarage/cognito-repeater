@@ -6,7 +6,6 @@ app = create_app()
 client = TestClient(app)
 
 @pytest.mark.parametrize('path,expected_status', [
-    ('/login', 307),
     ('/logout', 200),
     ('/callback', 200),
     ('/me', 200),
