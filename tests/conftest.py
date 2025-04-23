@@ -7,7 +7,12 @@ def app():
     return create_app()
 
 @pytest.fixture
-async def client(app):
+async def app_client(app):
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url='http://test') as client:
-        yield client
+    async with AsyncClient(transport=transport, base_url='http://test') as app_client:
+        yield app_client
+
+@pytest.fixture
+async def async_client():
+    async with AsyncClient() as async_client:
+        yield async_client
