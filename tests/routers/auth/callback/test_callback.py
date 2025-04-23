@@ -12,7 +12,7 @@ async def test_callback_missing_code(app_client: AsyncClient):
     }
 
 async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
-    async def fake_exchange_token(app, code):
+    async def fake_exchange_token(app, code: str) -> dict:
         return {
             'id_token': 'dummy',
             'access_token': 'dummy',
