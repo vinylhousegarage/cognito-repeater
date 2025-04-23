@@ -23,3 +23,10 @@ async def fetch_cognito_metadata(client: httpx.AsyncClient, metadata_url: str) -
     response = await client.get(metadata_url)
     response.raise_for_status()
     return response.json()
+
+async def cache_cognito_metadata(app) -> dict:
+    if not hasattr(app.state, 'metadata'):
+        async with httpx.AsyncClient() as client:
+            response = await client.get(app.state.config.AWS_COGNITO_METADATA_URL)
+            app.state.metadata = response.json()
+    return app.state.metadata
