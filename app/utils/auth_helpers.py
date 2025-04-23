@@ -30,3 +30,12 @@ async def redirect_to_cognito_login(request: Request) -> RedirectResponse:
     }
     full_url = f'{login_url}?{urlencode(params)}'
     return RedirectResponse(url=full_url)
+
+
+async def exchange_token(app, code: str) -> dict:
+
+    return {
+        "id_token": "dummy",
+        "access_token": "dummy",
+        "refresh_token": "dummy"
+    }
