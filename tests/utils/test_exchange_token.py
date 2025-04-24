@@ -1,5 +1,4 @@
-import app.utils.auth_helpers as auth_helpers
-from app.utils.token_helpers import create_token_request_payload
+import app.utils.token_helpers as token_helpers
 
 async def test_create_token_request_payload(monkeypatch, app):
     dummy_metadata = {'token_endpoint': 'https://example.com/oauth2/token'}
@@ -7,7 +6,7 @@ async def test_create_token_request_payload(monkeypatch, app):
     async def fake_cache_cognito_metadata(_):
           return dummy_metadata
 
-    monkeypatch.setattr(auth_helpers, 'cache_cognito_metadata', fake_cache_cognito_metadata)
+    monkeypatch.setattr(token_helpers, 'cache_cognito_metadata', fake_cache_cognito_metadata)
 
     url = dummy_metadata['token_endpoint']
 
@@ -25,5 +24,5 @@ async def test_create_token_request_payload(monkeypatch, app):
 
     payload = {'url': url, 'data': data, 'headers': headers}
 
-    result = await create_token_request_payload(app, code)
+    result = await token_helpers.create_token_request_payload(app, code)
     assert result == payload
