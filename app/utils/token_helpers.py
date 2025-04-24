@@ -20,6 +20,7 @@ async def create_token_request_payload(app, code):
     return payload
 
 async def exchange_token(app, code: str) -> dict:
+    payload = await create_token_request_payload(app, code)
 
     return {
         'id_token': 'dummy',
