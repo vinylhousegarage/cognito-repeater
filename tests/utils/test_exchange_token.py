@@ -1,4 +1,4 @@
-import app.utils.auth_helpers as auth_helpers
+import app.routers.auth as auth
 from app.utils.token_helpers import create_token_request_payload
 
 async def test_create_token_request_payload(monkeypatch, app):
@@ -7,7 +7,7 @@ async def test_create_token_request_payload(monkeypatch, app):
     async def fake_cache_cognito_metadata(_):
           return dummy_metadata
 
-    monkeypatch.setattr(auth_helpers, 'cache_cognito_metadata', fake_cache_cognito_metadata)
+    monkeypatch.setattr(auth, 'cache_cognito_metadata', fake_cache_cognito_metadata)
 
     url = dummy_metadata['token_endpoint']
 
