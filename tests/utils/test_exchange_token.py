@@ -9,7 +9,7 @@ async def test_create_token_request_payload(app):
     config = app.state.config
     data = {
         'code': code,
-        'redirect_url': config.AWS_COGNITO_REDIRECT_URI,
+        'redirect_uri': config.AWS_COGNITO_REDIRECT_URI,
         'grant_type': 'authorization_code',
         'client_id': config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         'client_secret': config.AWS_COGNITO_CLIENT_SECRET,
