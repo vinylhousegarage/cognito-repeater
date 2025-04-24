@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from app.utils.auth_helpers import redirect_to_cognito_login
-from app.utils.token_helpers import create_token_request_payload
+from app.utils.token_helpers import exchange_token
 
 router = APIRouter()
 
@@ -21,7 +21,7 @@ async def callback(request: Request):
             }
         )
 
-    tokens = await create_token_request_payload(request.app, code)
+    tokens = await exchange_token(request.app, code)
 
     return JSONResponse(
         status_code=200,
