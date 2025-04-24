@@ -1,8 +1,8 @@
 from app.utils.auth_helpers import cache_cognito_metadata
 
 async def create_token_request_payload(app, code):
-    meatadata = await cache_cognito_metadata(app)
-    url = meatadata['token_endpoint']
+    metaadata = await cache_cognito_metadata(app)
+    url = metaadata['token_endpoint']
 
     config = app.state.config
     data = {
