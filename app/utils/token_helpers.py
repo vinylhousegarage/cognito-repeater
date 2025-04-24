@@ -1,18 +1,23 @@
 from app.utils.auth_helpers import cache_cognito_metadata
-from urllib.parse import urlencode
 
-async def create_token_request_url(app):
+async def create_token_request_payload(app, code):
     meatadata = await cache_cognito_metadata(app)
-    config = app.state.config
+    url = meatadata['token_endpoint']
 
-    endpoint = meatadata['token_endpoint']
-    params = {
+    config = app.state.config
+    data = {
+        'code': code,
+        'redirect_uri': config.AWS_COGNITO_REDIRECT_URI,
         'grant_type': 'authorization_code',
         'client_id': config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         'client_secret': config.AWS_COGNITO_CLIENT_SECRET,
     }
 
-    return f'{endpoint}?{urlencode(params)}'
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+    payload = {'url': url, 'data': data, 'headers': headers}
+
+    return payload
 
 async def exchange_token(app, code: str) -> dict:
 
