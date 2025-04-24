@@ -12,14 +12,14 @@ async def test_callback_missing_code(app_client: AsyncClient):
     }
 
 async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
-    async def fake_create_token_request_payload(app, code: str) -> dict:
+    async def fake_exchange_token(app, code: str) -> dict:
         return {
             'id_token': 'dummy',
             'access_token': 'dummy',
             'refresh_token': 'dummy',
         }
 
-    monkeypatch.setattr(app.utils.token_helpers, 'create_token_request_payload', fake_create_token_request_payload)
+    monkeypatch.setattr(app.utils.token_helpers, 'exchange_token', fake_exchange_token)
 
     response = await app_client.get('/callback?code=abc123')
     assert response.status_code == 200
