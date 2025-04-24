@@ -1,19 +1,28 @@
-from app.utils.token_helpers import create_token_request_url
-from urllib.parse import urlencode
+import app.utils.token_helpers as token_helpers
 
-async def test_create_token_request_url(app):
-    app.state.metadata = {'token_endpoint': 'https://example.com/oauth2/token'}
-    metadata = app.state.metadata
-    endpoint = metadata['token_endpoint']
+async def test_create_token_request_payload(monkeypatch, app):
+    dummy_metadata = {'token_endpoint': 'https://example.com/oauth2/token'}
 
+    async def fake_cache_cognito_metadata(_):
+          return dummy_metadata
+
+    monkeypatch.setattr(token_helpers, 'cache_cognito_metadata', fake_cache_cognito_metadata)
+
+    url = dummy_metadata['token_endpoint']
+
+    code = 'abc1234'
     config = app.state.config
-    params = {
+    data = {
+        'code': code,
+        'redirect_uri': config.AWS_COGNITO_REDIRECT_URI,
         'grant_type': 'authorization_code',
         'client_id': config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         'client_secret': config.AWS_COGNITO_CLIENT_SECRET,
     }
 
-    expected = f'{endpoint}?{urlencode(params)}'
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-    result = await create_token_request_url(app)
-    assert result == expected
+    payload = {'url': url, 'data': data, 'headers': headers}
+
+    result = await token_helpers.create_token_request_payload(app, code)
+    assert result == payload
