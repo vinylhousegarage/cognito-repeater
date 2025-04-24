@@ -1,7 +1,7 @@
 from app.utils.token_helpers import create_token_request_url
 from urllib.parse import urlencode
 
-def test_create_token_request_url(app):
+async def test_create_token_request_url(app):
     metadata = app.state.metadata
     config = app.state.config
 
@@ -14,5 +14,5 @@ def test_create_token_request_url(app):
 
     expected = f'{endpoint}?{urlencode(params)}'
 
-    result = create_token_request_url(app)
+    result = await create_token_request_url(app)
     assert result == expected
