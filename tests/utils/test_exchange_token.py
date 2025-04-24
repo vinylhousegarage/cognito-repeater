@@ -1,4 +1,5 @@
 import app.utils.auth_helpers as auth_helpers
+from app.utils.token_helpers import create_token_request_payload
 
 async def test_create_token_request_payload(monkeypatch, app):
     dummy_metadata = {'token_endpoint': 'https://example.com/oauth2/token'}
@@ -24,5 +25,5 @@ async def test_create_token_request_payload(monkeypatch, app):
 
     payload = {'url': url, 'data': data, 'headers': headers}
 
-    result = await auth_helpers.create_token_request_payload(app, code)
+    result = await create_token_request_payload(app, code)
     assert result == payload
