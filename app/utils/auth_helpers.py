@@ -30,3 +30,7 @@ async def redirect_to_cognito_login(request: Request) -> RedirectResponse:
     }
     full_url = f'{login_url}?{urlencode(params)}'
     return RedirectResponse(url=full_url)
+
+async def generate_cognito_logout_url(*args, **kwargs):
+    logout_url = 'https://dummy.com'
+    return logout_url
