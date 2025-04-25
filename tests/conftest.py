@@ -16,3 +16,8 @@ async def app_client(app):
 async def async_client():
     async with AsyncClient() as async_client:
         yield async_client
+
+@pytest.fixture
+def dummy_code():
+    return 'abc1234'
+

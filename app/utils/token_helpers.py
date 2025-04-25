@@ -1,3 +1,4 @@
+from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
 
 async def create_token_request_payload(app, code):
@@ -20,10 +21,13 @@ async def create_token_request_payload(app, code):
     return payload
 
 async def exchange_token(app, code: str) -> dict:
-    _ = await create_token_request_payload(app, code)
+    payload = await create_token_request_payload(app, code)
+    url = payload['url']
+    data = payload['data']
+    headers = payload['headers']
 
-    return {
-        'id_token': 'dummy',
-        'access_token': 'dummy',
-        'refresh_token': 'dummy'
-    }
+    async with AsyncClient() as client:
+        response = await client.post(url, data=data, headers=headers)
+        response.raise_for_status()
+
+    return response.json()
