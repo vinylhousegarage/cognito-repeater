@@ -1,7 +1,8 @@
 import app.utils.auth_helpers as auth_helpers
+from fastapi import Request
 from urllib.parse import urlencode
 
-async def test_generate_cognito_logout_url(app, monkeypatch):
+async def test_generate_cognito_logout_url(request: Request, monkeypatch):
     dummy_metadata = {'logout_endpoint': 'https://dummy.com/logout/'}
     async def fake_cache_cognito_metadata(app):
         return dummy_metadata
@@ -16,6 +17,6 @@ async def test_generate_cognito_logout_url(app, monkeypatch):
 
     expected_url = f'{endpoint}?{urlencode(params)}'
 
-    logout_url = await auth_helpers.generate_cognito_logout_url(app)
+    logout_url = await auth_helpers.generate_cognito_logout_url(request)
 
     assert logout_url == expected_url
