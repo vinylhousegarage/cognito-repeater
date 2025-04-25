@@ -31,6 +31,13 @@ async def redirect_to_cognito_login(request: Request) -> RedirectResponse:
     full_url = f'{login_url}?{urlencode(params)}'
     return RedirectResponse(url=full_url)
 
-async def generate_cognito_logout_url(*args, **kwargs):
-    logout_url = 'https://dummy.com'
-    return logout_url
+async def generate_cognito_logout_url(request: Request) -> str:
+    app = request.app
+    config = app.state.config
+    metadata = await cache_cognito_metadata(app)
+    endpoint = metadata['end_session_endpoint']
+    params = {
+        'client_id': config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        'logout_uri': config.AWS_COGNITO_LOGOUT_URI,
+    }
+    return f'{endpoint}?{urlencode(params)}'
