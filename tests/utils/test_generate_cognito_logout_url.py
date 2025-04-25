@@ -1,5 +1,4 @@
 import app.utils.auth_helpers as auth_helpers
-from fastapi import Request
 from types import SimpleNamespace
 from urllib.parse import urlencode
 
