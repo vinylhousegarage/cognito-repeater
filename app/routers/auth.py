@@ -34,5 +34,5 @@ def get_me():
 
 @router.get('/logout')
 async def logout(request: Request) -> RedirectResponse:
-    logout_url = await generate_cognito_logout_url()
+    logout_url = await generate_cognito_logout_url(request)
     return RedirectResponse(url=logout_url)
