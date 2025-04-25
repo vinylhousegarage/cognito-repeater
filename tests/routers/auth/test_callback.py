@@ -31,3 +31,25 @@ async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
             'refresh_token': 'dummy',
         }
     }
+
+async def test_callback_returns_json_response(app_client: AsyncClient, monkeypatch):
+    dummy_response_data = {
+        'access_token': 'dummy_access_token',
+        'id_token': 'dummy_id_token',
+        'refresh_token': 'dummy_refresh_token',
+        'token_type': 'Bearer',
+        'expires_in': 3600
+    }
+
+    async def fake_exchange_token(app, code):
+        return dummy_response_data
+
+    monkeypatch.setattr(app.routers.auth, 'exchange_token', fake_exchange_token)
+
+    response = await app_client.get('/callback?code=test-code')
+
+    assert response.status_code == 200
+    assert response.json() == {
+        'message': 'Login successful',
+        'tokens': dummy_response_data
+    }
