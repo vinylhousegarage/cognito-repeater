@@ -4,12 +4,7 @@ from httpx import AsyncClient
 async def test_callback_missing_code(app_client: AsyncClient):
     response = await app_client.get('/callback')
     assert response.status_code == 400
-    assert response.json() == {
-        'detail': {
-            'error': 'missing_code',
-            'detail': 'Authorization code is required.'
-        }
-    }
+    assert response.json() == {'error': 'missing_code'}
 
 async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
     async def fake_exchange_token(app, code: str) -> dict:
@@ -24,13 +19,10 @@ async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
     response = await app_client.get('/callback?code=abc123')
     assert response.status_code == 200
     assert response.json() == {
-        'message': 'Login successful',
-        'tokens': {
             'id_token': 'dummy',
             'access_token': 'dummy',
             'refresh_token': 'dummy',
         }
-    }
 
 async def test_callback_returns_json_response(app_client: AsyncClient, monkeypatch):
     dummy_response_data = {
@@ -49,7 +41,4 @@ async def test_callback_returns_json_response(app_client: AsyncClient, monkeypat
     response = await app_client.get('/callback?code=test-code')
 
     assert response.status_code == 200
-    assert response.json() == {
-        'message': 'Login successful',
-        'tokens': dummy_response_data
-    }
+    assert response.json() == dummy_response_data
