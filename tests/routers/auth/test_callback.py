@@ -4,7 +4,11 @@ from httpx import AsyncClient
 async def test_callback_missing_code(app_client: AsyncClient):
     response = await app_client.get('/callback')
     assert response.status_code == 400
-    assert response.json() == {'error': 'missing_code'}
+    assert response.json() == {
+            'detail': {
+                'error': 'missing_code',
+            },
+        }
 
 async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
     async def fake_exchange_token(app, code: str) -> dict:
