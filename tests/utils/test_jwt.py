@@ -1,17 +1,11 @@
-from app.utils import jwt_helpers
+from types import SimpleNamespace
+from app.utils import auth_helpers
 
 async def test_fetch_cognito_jwks(async_client, monkeypatch):
     dummy_response = {
-        'keys': [
-            {
-                'kid': 'dummy-kid',
-                'kty': 'RSA',
-                'alg': 'RS256',
-                'use': 'sig',
-                'n': 'dummy-n',
-                'e': 'AQAB',
-            }
-        ]
+        'authorization_endpoint': 'https://example.com/oauth2/authorize',
+        'token_endpoint': 'https://example.com/oauth2/token',
+        'jwks_uri': 'https://example.com/.well-known/jwks.json'
     }
 
     async def fake_get(url, *args, **kwargs):
@@ -22,7 +16,13 @@ async def test_fetch_cognito_jwks(async_client, monkeypatch):
 
     monkeypatch.setattr(async_client, 'get', fake_get)
 
-    jwks_uri = 'https://dummy-endpoint/.well-known/jwks.json'
-    response = await jwt_helpers.fetch_cognito_jwks(jwks_uri)
+    request = SimpleNamespace()
+    request.app =SimpleNamespace()
+    request.app.state = SimpleNamespace()
+    request.app.state.config = SimpleNamespace()
+    request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com/metadata'
 
-    assert response == dummy_response
+    metadata = await auth_helpers.fetch_cognito_metadata(request)
+    uri = metadata['jwks_uri']
+
+    assert uri == dummy_response['jwks_uri']
