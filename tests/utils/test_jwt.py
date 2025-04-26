@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from app.utils import auth_helpers
+from app.utils import jwt_helpers
 
 async def test_fetch_cognito_jwks(async_client, monkeypatch):
     dummy_response = {
@@ -22,7 +22,7 @@ async def test_fetch_cognito_jwks(async_client, monkeypatch):
     request.app.state.config = SimpleNamespace()
     request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com/metadata'
 
-    metadata = await auth_helpers.fetch_cognito_jwks(request)
+    metadata = await jwt_helpers.fetch_cognito_jwks(request)
     uri = metadata['jwks_uri']
 
     assert uri == dummy_response['jwks_uri']
