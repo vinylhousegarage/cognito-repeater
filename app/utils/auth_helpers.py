@@ -17,11 +17,9 @@ async def cache_cognito_metadata(request: Request) -> dict:
             )
     return app.state.metadata
 
-
 async def redirect_to_cognito_login(request: Request) -> RedirectResponse:
-    app = request.app
     config = request.app.state.config
-    metadata = await cache_cognito_metadata(app)
+    metadata = await cache_cognito_metadata(request)
     login_url = metadata['authorization_endpoint']
     params = {
         'client_id': config.AWS_COGNITO_USER_POOL_CLIENT_ID,
@@ -35,7 +33,7 @@ async def redirect_to_cognito_login(request: Request) -> RedirectResponse:
 async def generate_cognito_logout_url(request: Request) -> str:
     app = request.app
     config = app.state.config
-    metadata = await cache_cognito_metadata(app)
+    metadata = await cache_cognito_metadata(request)
     endpoint = metadata['end_session_endpoint']
     params = {
         'client_id': config.AWS_COGNITO_USER_POOL_CLIENT_ID,
