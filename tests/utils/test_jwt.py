@@ -22,7 +22,7 @@ async def test_fetch_cognito_jwks(async_client, monkeypatch):
     request.app.state.config = SimpleNamespace()
     request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com/metadata'
 
-    metadata = await auth_helpers.fetch_cognito_metadata(request)
+    metadata = await auth_helpers.fetch_cognito_jwks(request)
     uri = metadata['jwks_uri']
 
     assert uri == dummy_response['jwks_uri']
