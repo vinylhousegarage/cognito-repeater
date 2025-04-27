@@ -42,25 +42,50 @@ def test_decode_access_token_for_kid():
 
 async def test_search_jwk_by_kid_found():
     dummy_kid = 'kid-dummy'
-    dummy_jwks = {
+    dummy_metadata = {
         'keys': [
             {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
             {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
         ]
     }
+    dummy_token = jwt.encode(
+        {'sub': 'user-id'},
+        key='secret',
+        algorithm='HS256',
+        headers={'kid': dummy_kid},
+    )
 
-    result = await jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
+    request = SimpleNamespace()
+    request.app =SimpleNamespace()
+    request.app.state = SimpleNamespace()
+    request.app.state.metadata = SimpleNamespace()
+    request.app.state.metadata = dummy_metadata
+
+    result = await jwt_helpers.search_jwk_by_kid(dummy_token, request)
 
     assert result['kid'] == dummy_kid
     assert result['kty'] == 'RSA'
 
 async def test_search_jwk_by_kid_not_found():
     dummy_kid = 'kid-non-existent'
-    dummy_jwks = {
+    dummy_metadata = {
         'keys': [
-            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'}
+            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
+            {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
         ]
     }
+    dummy_token = jwt.encode(
+        {'sub': 'user-id'},
+        key='secret',
+        algorithm='HS256',
+        headers={'kid': dummy_kid},
+    )
+
+    request = SimpleNamespace()
+    request.app =SimpleNamespace()
+    request.app.state = SimpleNamespace()
+    request.app.state.metadata = SimpleNamespace()
+    request.app.state.metadata = dummy_metadata
 
     with pytest.raises(HTTPException):
-        await jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
+        await jwt_helpers.search_jwk_by_kid(dummy_token, request)
