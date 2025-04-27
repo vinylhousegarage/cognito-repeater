@@ -2,10 +2,9 @@ import pytest
 from fastapi import HTTPException
 from jose import jwt
 from pytest_httpx import HTTPXMock
-from types import SimpleNamespace
 from app.utils import jwt_helpers
 
-async def test_fetch_cognito_jwks(httpx_mock: HTTPXMock):
+async def test_fetch_cognito_jwks(dummy_jwks_request, httpx_mock: HTTPXMock):
     dummy_metadata = {'jwks_uri': 'https://example.com/jwks'}
 
     dummy_jwks = {
@@ -16,13 +15,7 @@ async def test_fetch_cognito_jwks(httpx_mock: HTTPXMock):
 
     httpx_mock.add_response(url=dummy_metadata['jwks_uri'], json=dummy_jwks)
 
-    request = SimpleNamespace()
-    request.app =SimpleNamespace()
-    request.app.state = SimpleNamespace()
-    request.app.state.metadata = SimpleNamespace()
-    request.app.state.metadata = dummy_metadata
-
-    result = await jwt_helpers.fetch_cognito_jwks(request)
+    result = await jwt_helpers.fetch_cognito_jwks(dummy_jwks_request)
 
     assert result == dummy_jwks
 
@@ -40,14 +33,8 @@ def test_decode_access_token_for_kid():
 
     assert result == dummy_kid
 
-async def test_search_jwk_by_kid_found():
+async def test_search_jwk_by_kid_found(dummy_jwks_request):
     dummy_kid = 'kid-dummy'
-    dummy_metadata = {
-        'keys': [
-            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
-            {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
-        ]
-    }
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
         key='secret',
@@ -55,25 +42,13 @@ async def test_search_jwk_by_kid_found():
         headers={'kid': dummy_kid},
     )
 
-    request = SimpleNamespace()
-    request.app =SimpleNamespace()
-    request.app.state = SimpleNamespace()
-    request.app.state.metadata = SimpleNamespace()
-    request.app.state.metadata = dummy_metadata
-
-    result = await jwt_helpers.search_jwk_by_kid(dummy_token, request)
+    result = await jwt_helpers.search_jwk_by_kid(dummy_token, dummy_jwks_request)
 
     assert result['kid'] == dummy_kid
     assert result['kty'] == 'RSA'
 
-async def test_search_jwk_by_kid_not_found():
+async def test_search_jwk_by_kid_not_found(dummy_jwks_request):
     dummy_kid = 'kid-non-existent'
-    dummy_metadata = {
-        'keys': [
-            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
-            {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
-        ]
-    }
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
         key='secret',
@@ -81,11 +56,5 @@ async def test_search_jwk_by_kid_not_found():
         headers={'kid': dummy_kid},
     )
 
-    request = SimpleNamespace()
-    request.app =SimpleNamespace()
-    request.app.state = SimpleNamespace()
-    request.app.state.metadata = SimpleNamespace()
-    request.app.state.metadata = dummy_metadata
-
     with pytest.raises(HTTPException):
-        await jwt_helpers.search_jwk_by_kid(dummy_token, request)
+        await jwt_helpers.search_jwk_by_kid(dummy_token, dummy_jwks_request)
