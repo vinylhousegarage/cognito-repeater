@@ -1,4 +1,4 @@
-import jwt
+from jose import jwt
 from pytest_httpx import HTTPXMock
 from types import SimpleNamespace
 from app.utils import jwt_helpers
