@@ -1,3 +1,4 @@
+import pytest
 from jose import jwt
 from pytest_httpx import HTTPXMock
 from types import SimpleNamespace
@@ -37,3 +38,28 @@ def test_decode_access_token_for_kid():
     result = jwt_helpers.decode_access_token_for_kid(access_token=dummy_token)
 
     assert result == dummy_kid
+
+def test_search_jwk_by_kid_found():
+    dummy_kid = 'kid-dummy'
+    dummy_jwks = {
+        'keys': [
+            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
+            {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
+        ]
+    }
+
+    result = jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
+
+    assert result['kid'] == dummy_kid
+    assert result['kty'] == 'RSA'
+
+def test_search_jwk_by_kid_not_found():
+    dummy_kid = 'kid-non-existent'
+    dummy_jwks = {
+        'keys': [
+            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'}
+        ]
+    }
+
+    with pytest.raises(KeyError):
+        jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
