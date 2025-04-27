@@ -24,7 +24,7 @@ async def test_fetch_cognito_jwks(httpx_mock: HTTPXMock):
 
     assert result == dummy_jwks
 
-async def test_decode_access_token_for_kid():
+def test_decode_access_token_for_kid():
     dummy_kid = 'dummy-key-id'
 
     dummy_token = jwt.encode(
@@ -34,6 +34,6 @@ async def test_decode_access_token_for_kid():
         headers={'kid': dummy_kid},
     )
 
-    result = await jwt_helpers.decode_access_token_for_kid(dummy_token)
+    result = jwt_helpers.decode_access_token_for_kid(dummy_token)
 
     assert result == dummy_kid
