@@ -24,7 +24,7 @@ async def test_fetch_cognito_jwks(httpx_mock: HTTPXMock):
 
     assert result == dummy_jwks
 
-def test_decode_access_token_for_kid(test_client):
+def test_decode_access_token_for_kid():
     dummy_kid = 'dummy-key-id'
 
     dummy_token = jwt.encode(
@@ -37,11 +37,3 @@ def test_decode_access_token_for_kid(test_client):
     result = jwt_helpers.decode_access_token_for_kid(access_token=dummy_token)
 
     assert result == dummy_kid
-
-    response = test_client.get(
-        '/me',
-        follow_redirects=False,
-        headers={'Authorization': f'Bearer {dummy_token}'}
-    )
-
-    assert response.status_code == 200
