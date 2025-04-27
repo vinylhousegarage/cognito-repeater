@@ -28,7 +28,7 @@ async def test_decode_access_token_for_kid():
     dummy_kid = 'dummy-key-id'
 
     dummy_token = jwt.encode(
-        payload={'sub': 'user-id'},
+        {'sub': 'user-id'},
         key='secret',
         algorithm='HS256',
         headers={'kid': dummy_kid},
