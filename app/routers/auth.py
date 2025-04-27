@@ -23,7 +23,6 @@ async def callback(request: Request) -> dict:
 
 @router.get('/me')
 async def get_me(token: HTTPAuthorizationCredentials = Depends(bearer_schema)) -> dict:
-    access_token = token.credentials
     return {'user': 'sub'}
 
 @router.get('/logout')
