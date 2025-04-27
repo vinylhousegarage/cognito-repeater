@@ -23,5 +23,5 @@ def dummy_code():
     return 'abc1234'
 
 @pytest.fixture
-def test_client():
+def test_client(app):
     return TestClient(app)
