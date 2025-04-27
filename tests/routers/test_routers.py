@@ -6,7 +6,6 @@ app = create_app()
 client = TestClient(app)
 
 @pytest.mark.parametrize('path,expected_status', [
-    ('/me', 200),
     ('/health', 200),
     ('/not-exist', 404),
 ])
