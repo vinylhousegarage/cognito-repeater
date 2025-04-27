@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.utils.auth_helpers import generate_cognito_logout_url, redirect_to_cognito_login
 from app.utils.token_helpers import exchange_token
 
 router = APIRouter()
+bearer_schema = HTTPBearer()
 
 @router.get('/login')
 async def login(request: Request) -> RedirectResponse:
@@ -20,7 +22,7 @@ async def callback(request: Request) -> dict:
     return tokens
 
 @router.get('/me')
-def get_me():
+async def get_me(token: HTTPAuthorizationCredentials = Depends(bearer_schema)) -> dict:
     return {'user': 'sub'}
 
 @router.get('/logout')

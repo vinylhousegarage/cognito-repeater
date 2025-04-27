@@ -1,4 +1,5 @@
 import pytest
+from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from app import create_app
 
@@ -21,3 +22,6 @@ async def async_client():
 def dummy_code():
     return 'abc1234'
 
+@pytest.fixture
+def test_client(app):
+    return TestClient(app)
