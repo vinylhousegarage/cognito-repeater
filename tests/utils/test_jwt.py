@@ -1,4 +1,5 @@
 import pytest
+from fastapi import HTTPException
 from jose import jwt
 from pytest_httpx import HTTPXMock
 from types import SimpleNamespace
@@ -39,7 +40,7 @@ def test_decode_access_token_for_kid():
 
     assert result == dummy_kid
 
-def test_search_jwk_by_kid_found():
+async def test_search_jwk_by_kid_found():
     dummy_kid = 'kid-dummy'
     dummy_jwks = {
         'keys': [
@@ -48,12 +49,12 @@ def test_search_jwk_by_kid_found():
         ]
     }
 
-    result = jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
+    result = await jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
 
     assert result['kid'] == dummy_kid
     assert result['kty'] == 'RSA'
 
-def test_search_jwk_by_kid_not_found():
+async def test_search_jwk_by_kid_not_found():
     dummy_kid = 'kid-non-existent'
     dummy_jwks = {
         'keys': [
@@ -61,5 +62,5 @@ def test_search_jwk_by_kid_not_found():
         ]
     }
 
-    with pytest.raises(KeyError):
-        jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
+    with pytest.raises(HTTPException):
+        await jwt_helpers.search_jwk_by_kid(dummy_kid, dummy_jwks)
