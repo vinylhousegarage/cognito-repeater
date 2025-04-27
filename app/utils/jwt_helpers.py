@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import HTTPException, Request
 from jose import jwt
 from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
@@ -16,3 +16,13 @@ async def fetch_cognito_jwks(request: Request) -> dict:
 def decode_access_token_for_kid(access_token: str) -> str:
     headers = jwt.get_unverified_header(access_token)
     return headers['kid']
+
+async def search_jwk_by_kid(access_token: str, request: Request) -> dict:
+    kid = decode_access_token_for_kid(access_token)
+    jwks = await fetch_cognito_jwks(request)
+    jwk = next((k for k in jwks['keys'] if k['kid'] == kid), None)
+
+    if jwk is None:
+        raise HTTPException(status_code=400, detail={'error': 'non_existent'})
+
+    return jwk
