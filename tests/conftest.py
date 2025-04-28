@@ -53,3 +53,11 @@ def dummy_request(dummy_app_attr_state):
 def dummy_jwks_request(dummy_request, dummy_jwks_metadata):
     dummy_request.app.state.metadata = dummy_jwks_metadata
     return dummy_request
+
+@pytest.fixture
+def fetch_cognito_jwks_httpx_mock(dummy_jwks_request, httpx_mock):
+    dummy_metadata = dummy_jwks_request.app.state.metadata
+    return httpx_mock.add_response(
+        url=dummy_metadata['jwks_uri'],
+        json={'keys': dummy_metadata['keys']},
+    )

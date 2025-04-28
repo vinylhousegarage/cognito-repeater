@@ -1,16 +1,10 @@
 import pytest
 from fastapi import HTTPException
 from jose import jwt
-from pytest_httpx import HTTPXMock
 from app.utils import jwt_helpers
 
-async def test_fetch_cognito_jwks(dummy_jwks_request, httpx_mock: HTTPXMock):
+async def test_fetch_cognito_jwks(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
     dummy_metadata = dummy_jwks_request.app.state.metadata
-
-    httpx_mock.add_response(
-        url=dummy_metadata['jwks_uri'],
-        json={'keys': dummy_metadata['keys']},
-    )
 
     result = await jwt_helpers.fetch_cognito_jwks(dummy_jwks_request)
 
@@ -30,13 +24,7 @@ def test_decode_access_token_for_kid():
 
     assert result == dummy_kid
 
-async def test_search_jwk_by_kid_found(dummy_jwks_request, httpx_mock: HTTPXMock):
-    dummy_metadata = dummy_jwks_request.app.state.metadata
-    httpx_mock.add_response(
-        url=dummy_metadata['jwks_uri'],
-        json={'keys': dummy_metadata['keys']},
-    )
-
+async def test_search_jwk_by_kid_found(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
     dummy_kid = 'kid-dummy'
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
@@ -50,13 +38,7 @@ async def test_search_jwk_by_kid_found(dummy_jwks_request, httpx_mock: HTTPXMock
     assert result['kid'] == dummy_kid
     assert result['kty'] == 'RSA'
 
-async def test_search_jwk_by_kid_not_found(dummy_jwks_request, httpx_mock: HTTPXMock):
-    dummy_metadata = dummy_jwks_request.app.state.metadata
-    httpx_mock.add_response(
-        url=dummy_metadata['jwks_uri'],
-        json={'keys': dummy_metadata['keys']},
-    )
-
+async def test_search_jwk_by_kid_not_found(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
     dummy_kid = 'kid-non-existent'
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
