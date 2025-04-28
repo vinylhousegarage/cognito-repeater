@@ -1,5 +1,6 @@
 import base64
 import pytest
+from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi import HTTPException
 from jose import jwt
 from app.utils import jwt_helpers
@@ -88,3 +89,16 @@ def test_convert_bytes_to_int():
 
     assert n_int == dummy_n
     assert e_int == dummy_e
+
+def test_generate_public_key():
+    dummy_e = 65537
+
+    dummy_p = 257
+    dummy_q = 263
+    dummy_n = dummy_p * dummy_q
+
+    dummy_public_key = rsa.RSAPublicNumbers(dummy_e, dummy_n).public_key()
+
+    public_key = jwt_helpers.generate_public_key(dummy_e, dummy_n)
+
+    assert public_key.public_numbers() == dummy_public_key.public_numbers()
