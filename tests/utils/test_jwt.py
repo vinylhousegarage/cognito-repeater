@@ -94,7 +94,7 @@ def test_generate_public_key():
     p = 257
     q = 263
     dummy_n = p * q
-    dummy_e = 65337
+    dummy_e = 65537
     dummy_public_key = rsa.RSAPublicNumbers(dummy_n, dummy_e).public_key()
 
     public_key = jwt_helpers.generate_public_key()
