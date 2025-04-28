@@ -1,4 +1,5 @@
 import pytest
+from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from types import SimpleNamespace
@@ -61,3 +62,23 @@ def fetch_cognito_jwks_httpx_mock(dummy_jwks_request, httpx_mock):
         url=dummy_metadata['jwks_uri'],
         json={'keys': dummy_metadata['keys']},
     )
+
+@pytest.fixture
+def dummy_e_int():
+    return 65537
+
+@pytest.fixture
+def dummy_p_int():
+    return 257
+
+@pytest.fixture
+def dummy_q_int():
+    return 263
+
+@pytest.fixture
+def dummy_n_int(dummy_p_int, dummy_q_int):
+    return dummy_p_int * dummy_q_int
+
+@pytest.fixture
+def dummy_public_key(dummy_e_int, dummy_n_int):
+    return rsa.RSAPublicNumbers(dummy_e_int, dummy_n_int).public_key()
