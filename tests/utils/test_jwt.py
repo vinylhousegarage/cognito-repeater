@@ -1,6 +1,5 @@
 import base64
 import pytest
-from cryptography.hazmat.primitives import serialization
 from fastapi import HTTPException
 from jose import jwt
 from app.utils import jwt_helpers
