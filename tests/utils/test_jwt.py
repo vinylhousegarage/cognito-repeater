@@ -61,3 +61,19 @@ def test_decode_jwk_to_binary():
 
     assert n_bytes == b'\x01\x02\x03'
     assert e_bytes == b'\x01\x00\x01'
+
+def test_decode_jwk_to_binary_missing_n():
+    dummy_jwk = {
+        'e': base64.urlsafe_b64encode(b'\x01\x00\x01').rstrip(b'=').decode('utf-8'),
+    }
+
+    with pytest.raises(KeyError):
+        jwt_helpers.decode_jwk_to_binary(dummy_jwk)
+
+def test_decode_jwk_to_binary_missing_e():
+    dummy_jwk = {
+        'n': base64.urlsafe_b64encode(b'\x01\x02\x03').rstrip(b'=').decode('utf-8'),
+    }
+
+    with pytest.raises(KeyError):
+        jwt_helpers.decode_jwk_to_binary(dummy_jwk)
