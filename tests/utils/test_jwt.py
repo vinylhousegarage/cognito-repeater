@@ -84,7 +84,7 @@ def test_convert_bytes_to_int():
     dummy_n = int.from_bytes(n_bytes, 'big')
     dummy_e = int.from_bytes(e_bytes, 'big')
 
-    int_n, int_e = jwt_helpers.convert_bytes_to_int(n_bytes, e_bytes)
+    n_int, e_int = jwt_helpers.convert_bytes_to_int(n_bytes, e_bytes)
 
-    assert int_n == dummy_n
-    assert int_e == dummy_e
+    assert n_int == dummy_n
+    assert e_int == dummy_e
