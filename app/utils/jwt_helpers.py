@@ -33,5 +33,5 @@ def decode_jwk_to_binary(jwk: dict[str, str]) -> tuple[bytes, bytes]:
         n = base64url_decode(jwk['n'].encode('utf-8'))
         e = base64url_decode(jwk['e'].encode('utf-8'))
     except KeyError as e:
-        raise HTTPException(status_code=400, detail=f'Invalid JWK: missing field str{e}')
+        raise HTTPException(status_code=400, detail=f'Invalid JWK: missing field str{e.args[0]}')
     return n, e
