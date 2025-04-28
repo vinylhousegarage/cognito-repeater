@@ -82,6 +82,6 @@ def test_convert_bytes_to_int():
     n_bytes = b'\x01\x02\x03'
     dummy_n = int.from_bytes(n_bytes, 'big')
 
-    n = jwt_helpers.decode_bytes_to_init(n_bytes)
+    n = jwt_helpers.decode_bytes_to_int(n_bytes)
 
     assert n == dummy_n
