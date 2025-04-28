@@ -1,3 +1,4 @@
+from cryprography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from fastapi import HTTPException, Request
@@ -46,3 +47,10 @@ def convert_bytes_to_int(bytes_n: bytes, bytes_e: bytes) -> tuple[int, int]:
 def generate_public_key(int_e: int, int_n: int) -> RSAPublicKey:
     public_key = rsa.RSAPublicNumbers(int_e, int_n).public_key()
     return public_key
+
+def convert_public_key_to_pem(public_key: RSAPublicKey) -> bytes:
+    pem = public_key.public_bytes(
+        encoding = serialization.Encoding.PEM,
+        format = serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    return pem
