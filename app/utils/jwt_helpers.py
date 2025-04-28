@@ -30,8 +30,13 @@ async def search_jwk_by_kid(access_token: str, request: Request) -> dict:
 
 def decode_jwk_to_bytes(jwk: dict[str, str]) -> tuple[bytes, bytes]:
     try:
-        n = base64url_decode(jwk['n'].encode('utf-8'))
-        e = base64url_decode(jwk['e'].encode('utf-8'))
+        bytes_n = base64url_decode(jwk['n'].encode('utf-8'))
+        bytes_e = base64url_decode(jwk['e'].encode('utf-8'))
     except KeyError as e:
         raise HTTPException(status_code=400, detail=f'Invalid JWK: missing field str{e.args[0]}')
-    return n, e
+    return bytes_n, bytes_e
+
+def convert_bytes_to_int(bytes_n: bytes, bytes_e: bytes) -> tuple[int, int]:
+    int_n = int.from_bytes(bytes_n, 'big')
+    int_e = int.from_bytes(bytes_e, 'big')
+    return int_n, int_e
