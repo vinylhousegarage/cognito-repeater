@@ -1,5 +1,5 @@
-from cryptgraphy.hazmat.primitives.asymmetric import rsa
-from cryptgraphy.hazmat.primitives.asymmetric.rsa import RSAPublic
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublic
 from fastapi import HTTPException, Request
 from jose import jwt
 from jose.utils import base64url_decode
