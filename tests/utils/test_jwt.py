@@ -80,8 +80,11 @@ def test_decode_jwk_to_bytes_missing_e():
 
 def test_convert_bytes_to_int():
     n_bytes = b'\x01\x02\x03'
+    e_bytes = b'\x01\x00\x01'
     dummy_n = int.from_bytes(n_bytes, 'big')
+    dummy_e = int.from_bytes(e_bytes, 'big')
 
-    n = jwt_helpers.decode_bytes_to_int(n_bytes)
+    int_n, int_e = jwt_helpers.convert_bytes_to_int(n_bytes, e_bytes)
 
-    assert n == dummy_n
+    assert int_n == dummy_n
+    assert int_e == dummy_e
