@@ -1,5 +1,5 @@
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublic
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from fastapi import HTTPException, Request
 from jose import jwt
 from jose.utils import base64url_decode
@@ -43,5 +43,5 @@ def convert_bytes_to_int(bytes_n: bytes, bytes_e: bytes) -> tuple[int, int]:
     int_e = int.from_bytes(bytes_e, 'big')
     return int_n, int_e
 
-def generate_public_key(int_n: int, int_e: int) -> RSAPublic:
+def generate_public_key(int_n: int, int_e: int) -> RSAPublicKey:
     return rsa.RSAPublicNumbers(int_n, int_e).public_key()
