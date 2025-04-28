@@ -44,4 +44,5 @@ def convert_bytes_to_int(bytes_n: bytes, bytes_e: bytes) -> tuple[int, int]:
     return int_n, int_e
 
 def generate_public_key(int_e: int, int_n: int) -> RSAPublicKey:
-    return rsa.RSAPublicNumbers(int_e, int_n).public_key()
+    public_key = rsa.RSAPublicNumbers(int_e, int_n).public_key()
+    return public_key
