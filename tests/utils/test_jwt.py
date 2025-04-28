@@ -97,3 +97,8 @@ def test_convert_public_key_to_pem(dummy_public_key):
     result = jwt_helpers.convert_public_key_to_pem(dummy_public_key)
     assert b'-----BEGIN PUBLIC KEY-----' in result
     assert b'-----END PUBLIC KEY-----' in result
+
+def test_load_public_key_to_pem(dummy_public_key):
+    pem = jwt_helpers.convert_public_key_to_pem(dummy_public_key)
+    result = jwt_helpers.load_public_key_to_pem(pem)
+    assert result.public_numbers() == pem.public_numbers()
