@@ -1,5 +1,6 @@
 from fastapi import HTTPException, Request
 from jose import jwt
+from jose.utils import base64url_decode
 from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
 
@@ -26,3 +27,11 @@ async def search_jwk_by_kid(access_token: str, request: Request) -> dict:
         raise HTTPException(status_code=400, detail={'error': 'non_existent'})
 
     return jwk
+
+def decode_jwk_to_binary(jwk: dict[str, str]) -> tuple[bytes, bytes]:
+    try:
+        n = base64url_decode(jwk['n'].encode('utf-8'))
+        e = base64url_decode(jwk['e'].encode('utf-8'))
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f'Invalid JWK: missing field str{e}')
+    return n, e
