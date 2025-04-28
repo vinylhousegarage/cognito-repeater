@@ -78,7 +78,7 @@ def test_decode_jwk_to_bytes_missing_e():
     with pytest.raises(HTTPException):
         jwt_helpers.decode_jwk_to_bytes(dummy_jwk)
 
-def test_decode_bytes_to_int():
+def test_convert_bytes_to_int():
     n_bytes = b'\x01\x02\x03'
     dummy_n = int.from_bytes(n_bytes, 'big')
 
