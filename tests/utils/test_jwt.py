@@ -91,10 +91,10 @@ def test_convert_bytes_to_int():
     assert e_int == dummy_e
 
 def test_generate_public_key():
-    p = 251
-    q = 263
+    p = 89
+    q = 97
     dummy_n = p * q
-    dummy_e = 65537
+    dummy_e = 3
     dummy_public_key = rsa.RSAPublicNumbers(dummy_n, dummy_e).public_key()
 
     public_key = jwt_helpers.generate_public_key()
