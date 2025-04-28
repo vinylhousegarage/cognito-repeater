@@ -92,3 +92,8 @@ def test_convert_bytes_to_int():
 def test_generate_public_key(dummy_e_int, dummy_n_int, dummy_public_key):
     public_key = jwt_helpers.generate_public_key(dummy_e_int, dummy_n_int)
     assert public_key.public_numbers() == dummy_public_key.public_numbers()
+
+def test_convert_public_key_to_pem(dummy_public_key):
+    result = jwt_helpers.convert_public_key_to_pem(dummy_public_key)
+    assert b'-----BEGIN PUBLIC KEY-----' in result
+    assert b'-----END PUBLIC KEY-----' in result
