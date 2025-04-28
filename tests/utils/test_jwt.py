@@ -67,7 +67,7 @@ def test_decode_jwk_to_binary_missing_n():
         'e': base64.urlsafe_b64encode(b'\x01\x00\x01').rstrip(b'=').decode('utf-8'),
     }
 
-    with pytest.raises(KeyError):
+    with pytest.raises(HTTPException):
         jwt_helpers.decode_jwk_to_binary(dummy_jwk)
 
 def test_decode_jwk_to_binary_missing_e():
@@ -75,5 +75,5 @@ def test_decode_jwk_to_binary_missing_e():
         'n': base64.urlsafe_b64encode(b'\x01\x02\x03').rstrip(b'=').decode('utf-8'),
     }
 
-    with pytest.raises(KeyError):
+    with pytest.raises(HTTPException):
         jwt_helpers.decode_jwk_to_binary(dummy_jwk)
