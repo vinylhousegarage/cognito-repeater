@@ -28,7 +28,7 @@ async def search_jwk_by_kid(access_token: str, request: Request) -> dict:
 
     return jwk
 
-def decode_jwk_to_binary(jwk: dict[str, str]) -> tuple[bytes, bytes]:
+def decode_jwk_to_bytes(jwk: dict[str, str]) -> tuple[bytes, bytes]:
     try:
         n = base64url_decode(jwk['n'].encode('utf-8'))
         e = base64url_decode(jwk['e'].encode('utf-8'))
