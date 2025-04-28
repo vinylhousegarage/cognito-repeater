@@ -1,17 +1,14 @@
 import pytest
 from fastapi import HTTPException
 from jose import jwt
-from pytest_httpx import HTTPXMock
 from app.utils import jwt_helpers
 
-async def test_fetch_cognito_jwks(dummy_jwks_request, httpx_mock: HTTPXMock):
+async def test_fetch_cognito_jwks(dummy_jwks_request):
     dummy_metadata = dummy_jwks_request.app.state.metadata
-
-    httpx_mock.add_response(url=dummy_metadata['jwks_uri'], json={'keys': dummy_metadata['keys']})
 
     result = await jwt_helpers.fetch_cognito_jwks(dummy_jwks_request)
 
-    assert result == dummy_metadata['keys']
+    assert result['keys'] == dummy_metadata['keys']
 
 def test_decode_access_token_for_kid():
     dummy_kid = 'dummy-key-id'
