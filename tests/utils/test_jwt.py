@@ -1,3 +1,4 @@
+import base64
 import pytest
 from fastapi import HTTPException
 from jose import jwt
@@ -49,3 +50,30 @@ async def test_search_jwk_by_kid_not_found(dummy_jwks_request, fetch_cognito_jwk
 
     with pytest.raises(HTTPException):
         await jwt_helpers.search_jwk_by_kid(dummy_token, dummy_jwks_request)
+
+def test_decode_jwk_to_binary():
+    dummy_jwk = {
+        'n': base64.urlsafe_b64encode(b'\x01\x02\x03').rstrip(b'=').decode('utf-8'),
+        'e': base64.urlsafe_b64encode(b'\x01\x00\x01').rstrip(b'=').decode('utf-8'),
+    }
+
+    n_bytes, e_bytes = jwt_helpers.decode_jwk_to_binary(dummy_jwk)
+
+    assert n_bytes == b'\x01\x02\x03'
+    assert e_bytes == b'\x01\x00\x01'
+
+def test_decode_jwk_to_binary_missing_n():
+    dummy_jwk = {
+        'e': base64.urlsafe_b64encode(b'\x01\x00\x01').rstrip(b'=').decode('utf-8'),
+    }
+
+    with pytest.raises(HTTPException):
+        jwt_helpers.decode_jwk_to_binary(dummy_jwk)
+
+def test_decode_jwk_to_binary_missing_e():
+    dummy_jwk = {
+        'n': base64.urlsafe_b64encode(b'\x01\x02\x03').rstrip(b'=').decode('utf-8'),
+    }
+
+    with pytest.raises(HTTPException):
+        jwt_helpers.decode_jwk_to_binary(dummy_jwk)
