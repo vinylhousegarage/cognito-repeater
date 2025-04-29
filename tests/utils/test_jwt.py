@@ -108,7 +108,7 @@ def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_ki
     jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_second_public_key)
     assert dummy_request.app.state.public_keys[dummy_kid] == dummy_second_public_key
 
-def test_verify_access_token(dummy_request, dummy_kid, dummy_private_key_for_verify, dummy_public_key_for_verify):
+def test_verify_access_token(dummy_request, dummy_kid, dummy_private_key_for_verify_to_pem, dummy_public_key_for_verify):
     dummy_leeway = 10
     dummy_request.app.state.metadata = {'issuer': 'https://example.com'}
     dummy_request.app.state.config = SimpleNamespace()
@@ -116,7 +116,7 @@ def test_verify_access_token(dummy_request, dummy_kid, dummy_private_key_for_ver
 
     dummy_access_token = jwt.encode(
         {'sub': 'user-id'},
-        key = dummy_private_key_for_verify,
+        key = dummy_private_key_for_verify_to_pem,
         algorithm = 'RS256',
         headers = {'kid': dummy_kid},
     )

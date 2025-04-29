@@ -1,5 +1,7 @@
 import pytest
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from types import SimpleNamespace
@@ -109,3 +111,20 @@ def dummy_private_key_for_verify():
 @pytest.fixture
 def dummy_public_key_for_verify(dummy_private_key_for_verify):
     return dummy_private_key_for_verify.public_key()
+
+@pytest.fixture
+def dummy_private_key_for_verify_to_pem(dummy_private_key_for_verify):
+    private_pem = dummy_private_key_for_verify.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+    return load_pem_private_key(private_pem, password=None)
+
+@pytest.fixture
+def dummy_public_key_for_verify_to_pem(dummy_private_key_for_verify_to_pem):
+    public_pem = dummy_private_key_for_verify_to_pem.public_key().public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    return load_pem_public_key(public_pem)
