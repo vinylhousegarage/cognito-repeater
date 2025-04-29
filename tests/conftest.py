@@ -135,31 +135,30 @@ def dummy_request_for_verify(dummy_request):
 @pytest.fixture
 def dummy_access_token_factory(dummy_private_key_for_verify_to_pem, dummy_kid):
     def _create_dummy_access_token(payload: dict) -> str:
-        token = jwt.encode(
+        dummy_access_token = jwt.encode(
             payload,
             key = dummy_private_key_for_verify_to_pem,
             algorithm = 'RS256',
             headers = {'kid': dummy_kid},
         )
-        return token
+        return dummy_access_token
     return _create_dummy_access_token
 
 @pytest.fixture
-def dummy_claims(
-    dummy_access_token,
+def dummy_claims_factory(
+    dummy_access_token_factory,
     dummy_public_key_for_verify,
-    dummy_request_for_verify,
     dummy_leeway,
 ):
-    dummy_claims = jwt.decode(
-    dummy_access_token,
-    dummy_public_key_for_verify,
-    algorithms = ['RS256'],
-    audience = dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
-    issuer = dummy_request_for_verify.app.state.metadata['issuer'],
-    options = {
-        'verify_exp': True,
-        'leeway': dummy_leeway,
-    }
-    )
-    return dummy_claims
+    def _create_dummy_claims(payload: dict) -> dict:
+        dummy_access_token = dummy_access_token_factory(payload)
+        dummy_claims = jwt.decode(
+            dummy_access_token,
+            dummy_public_key_for_verify,
+            algorithms=['RS256'],
+            audience=payload['aud'],
+            issuer=payload['iss'],
+            options={'verify_exp': True, 'leeway': dummy_leeway},
+        )
+        return dummy_claims
+    return _create_dummy_claims

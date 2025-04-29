@@ -110,7 +110,7 @@ def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_ki
 
 def test_verify_access_token(
     dummy_access_token_factory,
-    dummy_claims,
+    dummy_claims_factory,
     dummy_leeway,
     dummy_public_key_for_verify,
     dummy_request_for_verify,
@@ -121,6 +121,7 @@ def test_verify_access_token(
         'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
     }
+    dummy_claims = dummy_claims_factory(payload)
     dummy_access_token = dummy_access_token_factory(payload)
 
     result = jwt_helpers.verify_access_token(
