@@ -86,3 +86,15 @@ def dummy_n_int(dummy_p_int, dummy_q_int):
 @pytest.fixture
 def dummy_public_key(dummy_e_int, dummy_n_int):
     return rsa.RSAPublicNumbers(dummy_e_int, dummy_n_int).public_key()
+
+@pytest.fixture
+def dummy_second_q_int():
+    return 269
+
+@pytest.fixture
+def dummy_second_n_int(dummy_p_int, dummy_second_q_int):
+    return dummy_p_int * dummy_second_q_int
+
+@pytest.fixture
+def dummy_second_public_key(dummy_e_int, dummy_second_n_int):
+    return rsa.RSAPublicNumbers(dummy_e_int, dummy_second_n_int).public_key()
