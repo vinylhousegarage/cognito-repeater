@@ -64,6 +64,10 @@ def fetch_cognito_jwks_httpx_mock(dummy_jwks_request, httpx_mock):
     )
 
 @pytest.fixture
+def dummy_kid():
+    return 'dummy-kid'
+
+@pytest.fixture
 def dummy_e_int():
     return 65537
 

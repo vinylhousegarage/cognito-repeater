@@ -11,9 +11,7 @@ async def test_fetch_cognito_jwks(dummy_jwks_request, fetch_cognito_jwks_httpx_m
 
     assert result['keys'] == dummy_metadata['keys']
 
-def test_decode_access_token_for_kid():
-    dummy_kid = 'dummy-key-id'
-
+def test_decode_access_token_for_kid(dummy_kid):
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
         key='secret',
@@ -25,8 +23,7 @@ def test_decode_access_token_for_kid():
 
     assert result == dummy_kid
 
-async def test_search_jwk_by_kid_found(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
-    dummy_kid = 'kid-dummy'
+async def test_search_jwk_by_kid_found(dummy_kid, dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
         key='secret',
@@ -40,12 +37,12 @@ async def test_search_jwk_by_kid_found(dummy_jwks_request, fetch_cognito_jwks_ht
     assert result['kty'] == 'RSA'
 
 async def test_search_jwk_by_kid_not_found(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
-    dummy_kid = 'kid-non-existent'
+    dummy_non_existent_kid = 'dummy-non-existent-kid'
     dummy_token = jwt.encode(
         {'sub': 'user-id'},
         key='secret',
         algorithm='HS256',
-        headers={'kid': dummy_kid},
+        headers={'kid': dummy_non_existent_kid},
     )
 
     with pytest.raises(HTTPException):
