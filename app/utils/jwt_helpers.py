@@ -46,3 +46,6 @@ def convert_bytes_to_int(bytes_n: bytes, bytes_e: bytes) -> tuple[int, int]:
 def generate_public_key(int_e: int, int_n: int) -> RSAPublicKey:
     public_key = rsa.RSAPublicNumbers(int_e, int_n).public_key()
     return public_key
+
+def cache_public_key(request: Request, public_key: RSAPublicKey):
+    request.app.state.public_key = public_key
