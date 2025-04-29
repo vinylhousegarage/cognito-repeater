@@ -29,12 +29,16 @@ def test_client(app):
     return TestClient(app)
 
 @pytest.fixture
+def dummy_kid():
+    return 'dummy-kid'
+
+@pytest.fixture
 def dummy_jwks_metadata():
     return {
         'jwks_uri': 'https://example.com/jwks',
         'keys': [
-            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
-            {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
+            {'kid': 'dummy-kid', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
+            {'kid': 'fake-kid', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
         ]
     }
 
@@ -62,10 +66,6 @@ def fetch_cognito_jwks_httpx_mock(dummy_jwks_request, httpx_mock):
         url=dummy_metadata['jwks_uri'],
         json={'keys': dummy_metadata['keys']},
     )
-
-@pytest.fixture
-def dummy_kid():
-    return 'dummy-kid'
 
 @pytest.fixture
 def dummy_e_int():
