@@ -119,12 +119,4 @@ def dummy_private_key_for_verify_to_pem(dummy_private_key_for_verify):
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
     )
-    return load_pem_private_key(private_pem, password=None)
-
-@pytest.fixture
-def dummy_public_key_for_verify_to_pem(dummy_private_key_for_verify_to_pem):
-    public_pem = dummy_private_key_for_verify_to_pem.public_key().public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    )
-    return load_pem_public_key(public_pem)
+    return private_pem.decode('utf-8')
