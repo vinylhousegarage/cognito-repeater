@@ -118,6 +118,7 @@ def test_verify_access_token(dummy_request, dummy_kid, dummy_private_key_for_ver
         {
           'sub': 'user-id',
           'iss': dummy_request.app.state.metadata['issuer'],
+          'aud': dummy_request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         },
         key = dummy_private_key_for_verify_to_pem,
         algorithm = 'RS256',
