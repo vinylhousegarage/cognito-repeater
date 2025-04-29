@@ -1,4 +1,5 @@
 import pytest
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
@@ -98,3 +99,23 @@ def dummy_second_n_int(dummy_p_int, dummy_second_q_int):
 @pytest.fixture
 def dummy_second_public_key(dummy_e_int, dummy_second_n_int):
     return rsa.RSAPublicNumbers(dummy_e_int, dummy_second_n_int).public_key()
+
+@pytest.fixture
+def dummy_private_key_for_verify():
+    return rsa.generate_private_key(
+        public_exponent = 65537,
+        key_size = 2048,
+    )
+
+@pytest.fixture
+def dummy_public_key_for_verify(dummy_private_key_for_verify):
+    return dummy_private_key_for_verify.public_key()
+
+@pytest.fixture
+def dummy_private_key_for_verify_to_pem(dummy_private_key_for_verify):
+    private_pem = dummy_private_key_for_verify.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+    return private_pem.decode('utf-8')

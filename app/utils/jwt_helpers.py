@@ -51,3 +51,17 @@ def cache_public_key_by_kid(request: Request, kid: str, public_key: RSAPublicKey
     if not hasattr(request.app.state, 'publick_keys'):
         request.app.state.public_keys = {}
     request.app.state.public_keys[kid] = public_key
+
+def verify_access_token(request: Request, access_token: str, public_key: RSAPublicKey, leeway = 10):
+    claims = jwt.decode(
+        access_token,
+        public_key,
+        algorithms = ['RS256'],
+        audience = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        issuer = request.app.state.metadata['issuer'],
+        options = {
+            'verify_exp': True,
+            'leeway': leeway,
+        }
+    )
+    return claims
