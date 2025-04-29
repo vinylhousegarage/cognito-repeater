@@ -101,3 +101,8 @@ def test_cache_public_key_by_kid_creates_keys_dict_when_missing(dummy_request, d
     jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_public_key)
 
     assert dummy_request.app.state.public_keys[dummy_kid] == dummy_public_key
+
+def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_kid, dummy_public_key, dummy_second_public_key):
+    jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_public_key)
+    jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_second_public_key)
+    assert dummy_request.app.state.public_keys[dummy_kid] == dummy_second_public_key
