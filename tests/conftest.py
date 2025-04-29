@@ -133,6 +133,18 @@ def dummy_request_for_verify(dummy_request):
     return dummy_request
 
 @pytest.fixture
+def dummy_access_token_factory(dummy_private_key_for_verify_to_pem, dummy_kid):
+    def _create_dummy_access_token(payload: dict) -> str:
+        token = jwt.encode(
+            payload,
+            key = dummy_private_key_for_verify_to_pem,
+            algorithm = 'RS256',
+            headers = {'kid': dummy_kid},
+        )
+        return token
+    return _create_dummy_access_token
+
+@pytest.fixture
 def dummy_claims(
     dummy_access_token,
     dummy_public_key_for_verify,

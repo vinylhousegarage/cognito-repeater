@@ -1,5 +1,6 @@
 import base64
 import pytest
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from jose import jwt
 from app.utils import jwt_helpers
@@ -108,23 +109,19 @@ def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_ki
     assert dummy_request.app.state.public_keys[dummy_kid] == dummy_second_public_key
 
 def test_verify_access_token(
+    dummy_access_token_factory,
     dummy_claims,
-    dummy_kid,
     dummy_leeway,
-    dummy_private_key_for_verify_to_pem,
     dummy_public_key_for_verify,
     dummy_request_for_verify,
 ):
-    dummy_access_token = jwt.encode(
-        {
-          'sub': 'user-id',
-          'iss': dummy_request_for_verify.app.state.metadata['issuer'],
-          'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
-        },
-        key = dummy_private_key_for_verify_to_pem,
-        algorithm = 'RS256',
-        headers = {'kid': dummy_kid},
-    )
+    payload = {
+        'sub': 'user-id',
+        'iss': dummy_request_for_verify.app.state.metadata['issuer'],
+        'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
+    }
+    dummy_access_token = dummy_access_token_factory(payload)
 
     result = jwt_helpers.verify_access_token(
         dummy_request_for_verify,
