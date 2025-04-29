@@ -90,6 +90,6 @@ def test_generate_public_key(dummy_e_int, dummy_n_int, dummy_public_key):
     public_key = jwt_helpers.generate_public_key(dummy_e_int, dummy_n_int)
     assert public_key.public_numbers() == dummy_public_key.public_numbers()
 
-def test_cache_public_key(dummy_request, dummy_public_key):
-    jwt_helpers.cache_public_key(dummy_request, dummy_public_key)
-    assert dummy_request.app.state.public_key == dummy_public_key
+def test_cache_public_key_by_kid(dummy_request, dummy_kid, dummy_public_key):
+    jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_public_key)
+    assert dummy_request.app.state.public_keys[dummy_kid] == dummy_public_key
