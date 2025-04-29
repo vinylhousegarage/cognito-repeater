@@ -106,3 +106,38 @@ def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_ki
     jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_public_key)
     jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_second_public_key)
     assert dummy_request.app.state.public_keys[dummy_kid] == dummy_second_public_key
+
+def test_verify_access_token(dummy_request, dummy_kid, dummy_private_key_for_verify, dummy_public_key_for_verify):
+    dummy_request.app.state.metadata = {
+        'issuer': dummy_request.app.state.config.AWS_COGNITO_AUTHORITY
+    }
+
+    dummy_leeway = 10
+
+    dummy_access_token = jwt.encode(
+        {'sub': 'user-id'},
+        key = dummy_private_key_for_verify,
+        algorithm = 'RS256',
+        headers = {'kid': dummy_kid},
+    )
+
+    dummy_claims = jwt.decode(
+        dummy_access_token,
+        dummy_public_key_for_verify,
+        algorithms = ['RS256'],
+        audience = dummy_request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        issuer = dummy_request.app.config.metadata['issuer'],
+        options = {
+            'verify_exp': True,
+            'leeway': dummy_leeway,
+        }
+    )
+
+    result = jwt_helpers.verify_access_token(
+        dummy_request,
+        dummy_access_token,
+        dummy_public_key_for_verify,
+        dummy_leeway
+    )
+
+    assert result == dummy_claims
