@@ -115,7 +115,10 @@ def test_verify_access_token(dummy_request, dummy_kid, dummy_private_key_for_ver
     dummy_request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID = 'test-client-id'
 
     dummy_access_token = jwt.encode(
-        {'sub': 'user-id'},
+        {
+          'sub': 'user-id',
+          'iss': dummy_request.app.state.metadata['issuer'],
+        },
         key = dummy_private_key_for_verify_to_pem,
         algorithm = 'RS256',
         headers = {'kid': dummy_kid},
