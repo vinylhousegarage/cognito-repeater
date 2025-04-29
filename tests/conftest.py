@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
+from jose import jwt
 from types import SimpleNamespace
 from app import create_app
 
@@ -119,3 +120,34 @@ def dummy_private_key_for_verify_to_pem(dummy_private_key_for_verify):
         encryption_algorithm=serialization.NoEncryption()
     )
     return private_pem.decode('utf-8')
+
+@pytest.fixture
+def dummy_leeway():
+    return 10
+
+@pytest.fixture
+def dummy_request_for_verify(dummy_request):
+    dummy_request.app.state.metadata = {'issuer': 'https://example.com'}
+    dummy_request.app.state.config = SimpleNamespace()
+    dummy_request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID = 'test-client-id'
+    return dummy_request
+
+@pytest.fixture
+def dummy_claims(
+    dummy_access_token,
+    dummy_public_key_for_verify,
+    dummy_request_for_verify,
+    dummy_leeway,
+):
+    dummy_claims = jwt.decode(
+    dummy_access_token,
+    dummy_public_key_for_verify,
+    algorithms = ['RS256'],
+    audience = dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+    issuer = dummy_request_for_verify.app.state.metadata['issuer'],
+    options = {
+        'verify_exp': True,
+        'leeway': dummy_leeway,
+    }
+    )
+    return dummy_claims
