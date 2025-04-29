@@ -108,13 +108,7 @@ def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_ki
     jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_second_public_key)
     assert dummy_request.app.state.public_keys[dummy_kid] == dummy_second_public_key
 
-def test_verify_access_token(
-    dummy_access_token_factory,
-    dummy_claims_factory,
-    dummy_leeway,
-    dummy_public_key_for_verify,
-    dummy_request_for_verify,
-):
+def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, dummy_leeway, dummy_public_key_for_verify, dummy_request_for_verify):
     payload = {
         'sub': 'user-id',
         'iss': dummy_request_for_verify.app.state.metadata['issuer'],
@@ -124,11 +118,6 @@ def test_verify_access_token(
     dummy_claims = dummy_claims_factory(payload)
     dummy_access_token = dummy_access_token_factory(payload)
 
-    result = jwt_helpers.verify_access_token(
-        dummy_request_for_verify,
-        dummy_access_token,
-        dummy_public_key_for_verify,
-        dummy_leeway
-    )
+    result = jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
 
     assert result == dummy_claims
