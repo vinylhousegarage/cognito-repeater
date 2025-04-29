@@ -98,3 +98,14 @@ def dummy_second_n_int(dummy_p_int, dummy_second_q_int):
 @pytest.fixture
 def dummy_second_public_key(dummy_e_int, dummy_second_n_int):
     return rsa.RSAPublicNumbers(dummy_e_int, dummy_second_n_int).public_key()
+
+@pytest.fixture
+def dummy_private_key_for_verify():
+    return rsa.generate_private_key(
+        public_exponent = 65537,
+        key_size = 2048,
+    )
+
+@pytest.fixture
+def dummy_public_key_for_verify(dummy_private_key_for_verify):
+    return dummy_private_key_for_verify.public_key()
