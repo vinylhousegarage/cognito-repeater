@@ -29,12 +29,16 @@ def test_client(app):
     return TestClient(app)
 
 @pytest.fixture
+def dummy_kid():
+    return 'dummy-kid'
+
+@pytest.fixture
 def dummy_jwks_metadata():
     return {
         'jwks_uri': 'https://example.com/jwks',
         'keys': [
-            {'kid': 'kid-dummy', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
-            {'kid': 'kid-fake', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
+            {'kid': 'dummy-kid', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'},
+            {'kid': 'fake-kid', 'kty': 'RSA', 'n': 'fake-n', 'e': 'fake-e'},
         ]
     }
 
