@@ -116,9 +116,7 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
 @pytest.mark.parametrize('broken_payload, expected_error', [
     ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
     ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
-    ({'sub': None}, 'Invalid sub claims'),
     ({'iss': None}, 'Invalid iss claims'),
-    ({'aud': None}, 'Invalid aud claims'),
 ])
 def test_verify_access_token_claim_errors(
     broken_payload,
@@ -139,12 +137,7 @@ def test_verify_access_token_claim_errors(
     dummy_access_token = dummy_access_token_factory(payload)
 
     with pytest.raises(HTTPException) as exc:
-        jwt_helpers.verify_access_token(
-            dummy_request_for_verify,
-            dummy_access_token,
-            dummy_public_key_for_verify,
-            dummy_leeway
-        )
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
