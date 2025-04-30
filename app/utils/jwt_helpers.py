@@ -73,7 +73,6 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
 
 def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
     claim_map = {
-        'sub': 'Invalid sub claims',
         'aud': 'Invalid aud claims',
         'iss': 'Invalid iss claims',
     }
