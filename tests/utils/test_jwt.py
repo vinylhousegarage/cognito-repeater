@@ -122,6 +122,16 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
 
     assert result == dummy_claims
 
+def test_verify_access_token_issuer_mismatch(dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify, dummy_leeway):
+    payload = {'iss': 'wrong-audience'}
+    dummy_access_token = dummy_access_token_factory(payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Invalid iss claims'
+
 def test_verify_access_token_audience_mismatch(dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify, dummy_leeway):
     payload = {'aud': 'wrong-audience'}
     dummy_access_token = dummy_access_token_factory(payload)
@@ -130,4 +140,4 @@ def test_verify_access_token_audience_mismatch(dummy_access_token_factory, dummy
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
 
     assert exc.value.status_code == 401
-    assert exc.value.detail['error'] == 'Invalid token claims'
+    assert exc.value.detail['error'] == 'Invalid aud claims'

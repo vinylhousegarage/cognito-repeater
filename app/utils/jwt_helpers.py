@@ -5,6 +5,7 @@ from jose import jwt
 from jose.exceptions import JWTClaimsError
 from jose.utils import base64url_decode
 from httpx import AsyncClient
+from typing import NoReturn
 from app.utils.auth_helpers import cache_cognito_metadata
 
 async def fetch_cognito_jwks(request: Request) -> dict:
@@ -67,5 +68,13 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
             }
         )
         return claims
-    except JWTClaimsError:
-        raise HTTPException(status_code=401, detail={'error': 'Invalid token claims'})
+    except JWTClaimsError as e:
+        handle_jwt_claims_error(e)
+
+def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
+        if 'aud' in str(e):
+            raise HTTPException(status_code=401, detail={'error': 'Invalid aud claims'})
+        elif 'iss' in str(e):
+            raise HTTPException(status_code=401, detail={'error': 'Invalid iss claims'})
+        else:
+            raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
