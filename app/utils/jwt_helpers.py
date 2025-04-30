@@ -53,15 +53,18 @@ def cache_public_key_by_kid(request: Request, kid: str, public_key: RSAPublicKey
     request.app.state.public_keys[kid] = public_key
 
 def verify_access_token(request: Request, access_token: str, public_key: RSAPublicKey, leeway = 10):
-    claims = jwt.decode(
-        access_token,
-        public_key,
-        algorithms = ['RS256'],
-        audience = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
-        issuer = request.app.state.metadata['issuer'],
-        options = {
-            'verify_exp': True,
-            'leeway': leeway,
-        }
-    )
-    return claims
+    try:
+        claims = jwt.decode(
+            access_token,
+            public_key,
+            algorithms = ['RS256'],
+            audience = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+            issuer = request.app.state.metadata['issuer'],
+            options = {
+                'verify_exp': True,
+                'leeway': leeway,
+            }
+        )
+        return claims
+    except Exception:
+        raise HTTPException(status_code=401, detail={'error': 'Invalid token claims'})
