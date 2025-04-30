@@ -132,7 +132,7 @@ def test_verify_access_token_claim_errors(broken_payload, expected_error, dummy_
     dummy_access_token = dummy_access_token_factory(payload)
 
     with pytest.raises(HTTPException) as exc:
-        jwt_helpers.verify_access_token(dummy_access_token, dummy_leeway,  dummy_public_key_for_verify, dummy_request_for_verify)
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
