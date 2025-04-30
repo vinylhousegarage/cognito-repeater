@@ -1,6 +1,7 @@
 import pytest
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+from datetime import datetime, timedelta, timezone
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
 from jose import jwt
@@ -133,10 +134,19 @@ def dummy_request_for_verify(dummy_request):
     return dummy_request
 
 @pytest.fixture
+def dummy_payload(dummy_request_for_verify):
+    return {
+        'sub': 'user-id',
+        'iss': dummy_request_for_verify.app.state.metadata['issuer'],
+        'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
+    }
+
+@pytest.fixture
 def dummy_access_token_factory(dummy_private_key_for_verify_to_pem, dummy_kid):
-    def _create_dummy_access_token(payload: dict) -> str:
+    def _create_dummy_access_token(dummy_payload: dict) -> str:
         dummy_access_token = jwt.encode(
-            payload,
+            dummy_payload,
             key = dummy_private_key_for_verify_to_pem,
             algorithm = 'RS256',
             headers = {'kid': dummy_kid},
@@ -150,14 +160,14 @@ def dummy_claims_factory(
     dummy_public_key_for_verify,
     dummy_leeway,
 ):
-    def _create_dummy_claims(payload: dict) -> dict:
-        dummy_access_token = dummy_access_token_factory(payload)
+    def _create_dummy_claims(dummy_payload: dict) -> dict:
+        dummy_access_token = dummy_access_token_factory(dummy_payload)
         dummy_claims = jwt.decode(
             dummy_access_token,
             dummy_public_key_for_verify,
-            algorithms=['RS256'],
-            audience=payload['aud'],
-            issuer=payload['iss'],
+            algorithms = ['RS256'],
+            audience = dummy_payload['aud'],
+            issuer = dummy_payload['iss'],
             options={'verify_exp': True, 'leeway': dummy_leeway},
         )
         return dummy_claims
