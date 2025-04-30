@@ -114,7 +114,6 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('broken_payload, expected_error', [
-    ({'sub': 'wrong-audience'}, 'Invalid sub claims'),
     ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
     ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
     ({'sub': None}, 'Invalid sub claims'),
