@@ -72,9 +72,13 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
         handle_jwt_claims_error(e)
 
 def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
-        if 'aud' in str(e):
-            raise HTTPException(status_code=401, detail={'error': 'Invalid aud claims'})
-        elif 'iss' in str(e):
-            raise HTTPException(status_code=401, detail={'error': 'Invalid iss claims'})
-        else:
-            raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
+    claim_map = {
+        'sub': 'Invalid sub claims',
+        'aud': 'Invalid aud claims',
+        'iss': 'Invalid iss claims',
+    }
+    message = str(e).lower()
+    for key, msg in claim_map.items():
+        if key in message:
+            raise HTTPException(status_code=401, detail={'error': msg})
+    raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
