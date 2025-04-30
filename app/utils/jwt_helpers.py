@@ -2,6 +2,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from fastapi import HTTPException, Request
 from jose import jwt
+from jose.exceptions import JWTClaimsError
 from jose.utils import base64url_decode
 from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
@@ -66,5 +67,5 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
             }
         )
         return claims
-    except Exception:
+    except JWTClaimsError:
         raise HTTPException(status_code=401, detail={'error': 'Invalid token claims'})
