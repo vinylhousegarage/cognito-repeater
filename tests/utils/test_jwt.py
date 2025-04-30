@@ -1,5 +1,6 @@
 import base64
 import pytest
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from jose import jwt
 from app.utils import jwt_helpers
@@ -112,3 +113,26 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     dummy_access_token = dummy_access_token_factory(dummy_payload)
     result = jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
     assert result == dummy_claims
+
+@pytest.mark.parametrize('broken_payload, expected_error', [
+    ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
+    ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
+    ({
+        'aud': 'test-client-id',
+        'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
+    }, 'Invalid iss claims'),
+])
+def test_verify_access_token_claim_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_leeway, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
+    payload = dummy_payload.copy()
+    payload.update(broken_payload)
+
+    if 'iss' in broken_payload and broken_payload['iss'] is None:
+        del payload['iss']
+
+    dummy_access_token = dummy_access_token_factory(payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_access_token, dummy_leeway,  dummy_public_key_for_verify, dummy_request_for_verify)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == expected_error
