@@ -141,3 +141,16 @@ def test_verify_access_token_audience_mismatch(dummy_access_token_factory, dummy
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == 'Invalid aud claims'
+
+def test_verify_access_token_issuer_missing(dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify, dummy_leeway):
+    payload = {
+        'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
+    }
+    dummy_access_token = dummy_access_token_factory(payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Invalid iss claims'
