@@ -114,21 +114,38 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('broken_payload, expected_error', [
+    ({'sub': 'wrong-audience'}, 'Invalid sub claims'),
     ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
     ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
+    ({'sub': None}, 'Invalid sub claims'),
     ({'iss': None}, 'Invalid iss claims'),
+    ({'aud': None}, 'Invalid aud claims'),
 ])
-def test_verify_access_token_claim_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_leeway, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
+def test_verify_access_token_claim_errors(
+    broken_payload,
+    expected_error,
+    dummy_access_token_factory,
+    dummy_leeway,
+    dummy_request_for_verify,
+    dummy_payload,
+    dummy_public_key_for_verify
+):
     payload = dummy_payload.copy()
     payload.update(broken_payload)
 
-    if 'iss' in broken_payload and broken_payload['iss'] is None:
-        del payload['iss']
+    for key, value in broken_payload.items():
+        if value is None:
+            payload.pop(key, None)
 
     dummy_access_token = dummy_access_token_factory(payload)
 
     with pytest.raises(HTTPException) as exc:
-        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
+        jwt_helpers.verify_access_token(
+            dummy_request_for_verify,
+            dummy_access_token,
+            dummy_public_key_for_verify,
+            dummy_leeway
+        )
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
