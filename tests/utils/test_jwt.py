@@ -159,14 +159,14 @@ def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload
 @pytest.mark.parametrize('broken_payload, expected_error', [
     ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
 ])
-def test_verify_access_token_claim_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_leeway, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
+def test_verify_access_token_claims_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
     payload = dummy_payload.copy()
     payload.update(broken_payload)
 
     dummy_access_token = dummy_access_token_factory(payload)
 
     with pytest.raises(HTTPException) as exc:
-        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
