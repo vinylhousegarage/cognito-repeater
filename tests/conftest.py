@@ -123,6 +123,17 @@ def dummy_private_key_for_verify_to_pem(dummy_private_key_for_verify):
     return private_pem.decode('utf-8')
 
 @pytest.fixture
+def dummy_second_private_key_for_verify():
+    return rsa.generate_private_key(
+        public_exponent = 65537,
+        key_size = 2048,
+    )
+
+@pytest.fixture
+def dummy_second_public_key_for_verify(dummy_second_private_key_for_verify):
+    return dummy_second_private_key_for_verify.public_key()
+
+@pytest.fixture
 def dummy_leeway():
     return 10
 
