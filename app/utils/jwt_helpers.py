@@ -66,7 +66,6 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
                 'leeway': leeway,
             }
         )
-        return claims
     except ExpiredSignatureError as e:
         log_jwt_error(e)
         raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
@@ -79,6 +78,19 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
     except JWTError as e:
         log_jwt_error(e)
         raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
+
+    required_claims = ['sub', 'iss', 'aud', 'exp']
+    for claim in required_claims:
+        if claim not in claims:
+            raise HTTPException(
+                status_code=401,
+                detail={
+                    'error': f'Missing {claim} claim',
+                    'type': 'MissingClaimError'
+                }
+            )
+
+    return claims
 
 def log_jwt_error(e: Exception) -> None:
     print(f'debug-{type(e).__name__}-str(e): {str(e)}')
