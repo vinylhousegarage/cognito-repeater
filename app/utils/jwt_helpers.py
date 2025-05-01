@@ -91,6 +91,7 @@ def handle_jws_signature_error(e: JWSSignatureError) -> NoReturn:
     return handle_error(e, {'signature verification failed': 'Invalid signature'})
 
 def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
+    print(f'DEBUG: str(e) = {str(e)}')
     return handle_error(e, {'invalid claim: aud': 'Invalid audience claims', 'invalid claim: iss': 'Invalid issuer claims'})
 
 def handle_jwt_error(e: JWTError) -> NoReturn:
