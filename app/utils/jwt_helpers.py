@@ -102,4 +102,9 @@ def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
 def handle_jwt_error(e: JWTError) -> NoReturn:
     print(f'debug-jwt-error-str(e): {str(e)}')
     print(f'debug-jwt-error-type(e): {type(e)}')
-    return handle_error(e, {'invalid audience': 'Missing aud claim'})
+    message = str(e).lower()
+    if 'signature verification failed' in message:
+        raise HTTPException(status_code=401, detail={'error': 'Invalid signature'})
+    if 'invalid audience' in message:
+        raise HTTPException(status_code=401, detail={'error': 'Missing aud claim'})
+    raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
