@@ -117,7 +117,7 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('mocked_exception, expected_detail', [
-    (ExpiredSignatureError('Token is expired'), 'Token expired'),
+    (ExpiredSignatureError('Signature has expired'), 'Token expired'),
     (JWSSignatureError('Signature verification failed'), 'Invalid signature'),
     (JWTClaimsError('Invalid claim: aud'), 'Invalid aud claims'),
     (JWTError('Invalid audience'), 'Missing aud claim'),
