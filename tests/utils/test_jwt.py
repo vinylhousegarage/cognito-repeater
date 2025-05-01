@@ -174,6 +174,8 @@ def test_verify_access_token_claims_errors(broken_payload, expected_error, dummy
 
 @pytest.mark.parametrize('missing_claim, expected_error', [
     ('sub', 'Missing sub claim'),
+    ('iss', 'Missing iss claim'),
+    ('aud', 'Missing aud claim'),
     ('exp', 'Missing exp claim'),
 ])
 def test_verify_access_token_missing_required_claims(missing_claim, expected_error, dummy_payload, dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify):
