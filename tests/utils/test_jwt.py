@@ -171,3 +171,18 @@ def test_verify_access_token_claims_errors(broken_payload, expected_error, dummy
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
+
+@pytest.mark.parametrize('missing_claim, expected_error', [
+    ('sub', 'Missing sub claim'),
+    ('exp', 'Missing exp claim'),
+])
+def test_verify_access_token_missing_required_claims(missing_claim, expected_error, dummy_payload, dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify):
+    payload = dummy_payload.copy()
+    del payload[missing_claim]
+    dummy_access_token = dummy_access_token_factory(payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == expected_error
