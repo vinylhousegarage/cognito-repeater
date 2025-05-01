@@ -69,42 +69,18 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
         )
         return claims
     except ExpiredSignatureError as e:
-        handle_expired_signature_error(e)
+        log_jwt_error(e)
+        raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
     except JWSSignatureError as e:
-        handle_jws_signature_error(e)
+        log_jwt_error(e)
+        raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
     except JWTClaimsError as e:
-        handle_jwt_claims_error(e)
+        log_jwt_error(e)
+        raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
     except JWTError as e:
-        handle_jwt_error(e)
+        log_jwt_error(e)
+        raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
 
-def handle_error(e: Exception, claim_map: dict[str, str]) -> NoReturn:
-    message = str(e).lower()
-    for key, msg in claim_map.items():
-        if key in message:
-            raise HTTPException(status_code=401, detail={'error': msg})
-    raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
-
-def handle_expired_signature_error(e: ExpiredSignatureError) -> NoReturn:
-    print(f'debug-exp-str(e): {str(e)}')
-    print(f'debug-esp-type(e): {type(e)}')
-    return handle_error(e, {'signature has expired': 'Token expired'})
-
-def handle_jws_signature_error(e: JWSSignatureError) -> NoReturn:
-    print(f'debug-sign-str(e): {str(e)}')
-    print(f'debug-sign-type(e): {type(e)}')
-    return handle_error(e, {'signature verification failed': 'Invalid signature'})
-
-def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
-    print(f'debug-claims-str(e): {str(e)}')
-    print(f'debug-claims-type(e): {type(e)}')
-    return handle_error(e, {'invalid claim: aud': 'Invalid aud claims'})
-
-def handle_jwt_error(e: JWTError) -> NoReturn:
-    print(f'debug-jwt-error-str(e): {str(e)}')
-    print(f'debug-jwt-error-type(e): {type(e)}')
-    message = str(e).lower()
-    if 'signature verification failed' in message:
-        raise HTTPException(status_code=401, detail={'error': 'Invalid signature'})
-    if 'invalid audience' in message:
-        raise HTTPException(status_code=401, detail={'error': 'Missing aud claim'})
-    raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
+def log_jwt_error(e: Exception) -> None:
+    print(f'debug-{type(e).__name__}-str(e): {str(e)}')
+    print(f'debug-{type(e).__name__}-type(e): {type(e)}')
