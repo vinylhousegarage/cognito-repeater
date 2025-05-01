@@ -1,5 +1,6 @@
 import base64
 import pytest
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError, JWSSignatureError
@@ -116,7 +117,7 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('mocked_exception, expected_detail', [
-    (ExpiredSignatureError('Token is expired'), 'Token expired'),
+    (ExpiredSignatureError('Signature has expired'), 'Token expired'),
     (JWSSignatureError('Signature verification failed'), 'Invalid signature'),
     (JWTClaimsError('Invalid claim: aud'), 'Invalid aud claims'),
     (JWTError('Invalid audience'), 'Missing aud claim'),
@@ -134,3 +135,14 @@ def test_verify_access_token_exceptions(mocked_exception, expected_detail, monke
 
     assert exc_info.value.status_code == 401
     assert expected_detail in exc_info.value.detail['error']
+
+def test_verify_access_token_expired(dummy_payload, dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify):
+    expired_payload = dummy_payload.copy()
+    expired_payload['exp'] = datetime.now(timezone.utc) - timedelta(minutes=6) # Original token valid for 5 minutes; exp set 6 minutes ago
+    dummy_access_token = dummy_access_token_factory(expired_payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Token expired'
