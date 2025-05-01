@@ -86,7 +86,7 @@ def handle_error(e: Exception, claim_map: dict[str, str]) -> NoReturn:
 
 def handle_expired_signature_error(e: ExpiredSignatureError) -> NoReturn:
     print(f'debug-exp-str(e): {str(e)}')
-    return handle_error(e, {'Signature has expired': 'Token expired'})
+    return handle_error(e, {'signature has expired': 'Token expired'})
 
 def handle_jws_signature_error(e: JWSSignatureError) -> NoReturn:
     print(f'debug-sign-str(e): {str(e)}')
