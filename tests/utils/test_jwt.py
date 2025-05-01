@@ -146,3 +146,12 @@ def test_verify_access_token_expired(dummy_payload, dummy_access_token_factory, 
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == 'Token expired'
+
+def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_second_public_key):
+    dummy_access_token = dummy_access_token_factory(dummy_payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_second_public_key)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Invalid signature'
