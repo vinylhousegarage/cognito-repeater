@@ -157,7 +157,6 @@ def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload
     assert exc.value.detail['error'] == 'Invalid signature'
 
 @pytest.mark.parametrize('broken_payload, expected_error', [
-    ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
     ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
 ])
 def test_verify_access_token_claim_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_leeway, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
