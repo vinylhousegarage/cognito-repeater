@@ -85,16 +85,13 @@ def handle_error(e: Exception, claim_map: dict[str, str]) -> NoReturn:
     raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
 
 def handle_expired_signature_error(e: ExpiredSignatureError) -> NoReturn:
-    print(f'DEBUG: str(e) = {str(e)}')
-    return handle_error(e, {'token expired': 'Token expired'})
+    return handle_error(e, {'token is expired': 'Token is expired'})
 
 def handle_jws_signature_error(e: JWSSignatureError) -> NoReturn:
-    print(f'DEBUG: str(e) = {str(e)}')
-    return handle_error(e, {'invalid signature': 'Invalid signature'})
+    return handle_error(e, {'signature verification failed': 'Invalid signature'})
 
 def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
-    return handle_error(e, {'aud': 'Invalid aud claims', 'iss': 'Invalid iss claims'})
+    return handle_error(e, {'invalid claim: aud': 'Invalid audience claims', 'invalid claim: iss': 'Invalid issuer claims'})
 
 def handle_jwt_error(e: JWTError) -> NoReturn:
-    print(f'DEBUG: str(e) = {str(e)}')
-    return handle_error(e, {'missing aud claims': 'Missing aud claim'})
+    return handle_error(e, {'invalid audience': 'Invalid audience'})
