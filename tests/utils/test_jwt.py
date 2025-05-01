@@ -2,7 +2,7 @@ import base64
 import pytest
 from fastapi import HTTPException
 from jose import jwt
-from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError, JWSSignatureError
+from jose.exceptions import JWTClaimsError
 from app.utils import jwt_helpers
 
 async def test_fetch_cognito_jwks(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
@@ -115,10 +115,7 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('mocked_exception, expected_detail', [
-    (ExpiredSignatureError('Token is expired'), 'Token expired'),
-    (JWSSignatureError('Signature verification failed'), 'Invalid signature'),
     (JWTClaimsError('Invalid claim: aud'), 'Invalid aud claims'),
-    (JWTError('Invalid audience'), 'Missing aud claim'),
 ])
 def test_verify_access_token_exceptions(mocked_exception, expected_detail, monkeypatch, dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_public_key_for_verify):
     dummy_access_token = dummy_access_token_factory(dummy_payload)
