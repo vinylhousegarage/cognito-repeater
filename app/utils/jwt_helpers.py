@@ -50,7 +50,7 @@ def generate_public_key(int_e: int, int_n: int) -> RSAPublicKey:
     return public_key
 
 def cache_public_key_by_kid(request: Request, kid: str, public_key: RSAPublicKey) -> None:
-    if not hasattr(request.app.state, 'publick_keys'):
+    if not hasattr(request.app.state, 'public_keys'):
         request.app.state.public_keys = {}
     request.app.state.public_keys[kid] = public_key
 
