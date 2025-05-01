@@ -136,9 +136,9 @@ def test_verify_access_token_exceptions(mocked_exception, expected_detail, monke
     assert exc_info.value.status_code == 401
     assert expected_detail in exc_info.value.detail['error']
 
-def test_verify_access_token_expired(dummy_payload, dummy_access_token_factory, dummy_leeway, dummy_request_for_verify, dummy_public_key_for_verify):
+def test_verify_access_token_expired(dummy_payload, dummy_access_token_factory, dummy_request_for_verify, dummy_public_key_for_verify):
     expired_payload = dummy_payload.copy()
-    expired_payload['exp'] = datetime.now(timezone.utc) - timedelta(minutes=6) # 5-minute token + 1 minute to simulate expiration
+    expired_payload['exp'] = datetime.now(timezone.utc) - timedelta(minutes=6) # Original token valid for 5 minutes; exp set 6 minutes ago
     dummy_access_token = dummy_access_token_factory(expired_payload)
 
     with pytest.raises(HTTPException) as exc:
