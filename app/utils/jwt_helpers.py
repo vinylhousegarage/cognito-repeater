@@ -5,7 +5,6 @@ from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError, JWSSignatureError
 from jose.utils import base64url_decode
 from httpx import AsyncClient
-from typing import NoReturn
 from app.utils.auth_helpers import cache_cognito_metadata
 
 async def fetch_cognito_jwks(request: Request) -> dict:
