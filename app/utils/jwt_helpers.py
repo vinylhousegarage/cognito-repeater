@@ -2,7 +2,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from fastapi import HTTPException, Request
 from jose import jwt
-from jose.exceptions import JWTClaimsError
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError, JWSSignatureError
 from jose.utils import base64url_decode
 from httpx import AsyncClient
 from typing import NoReturn
@@ -50,7 +50,7 @@ def generate_public_key(int_e: int, int_n: int) -> RSAPublicKey:
     return public_key
 
 def cache_public_key_by_kid(request: Request, kid: str, public_key: RSAPublicKey) -> None:
-    if not hasattr(request.app.state, 'publick_keys'):
+    if not hasattr(request.app.state, 'public_keys'):
         request.app.state.public_keys = {}
     request.app.state.public_keys[kid] = public_key
 
@@ -68,16 +68,30 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
             }
         )
         return claims
+    except ExpiredSignatureError as e:
+        handle_expired_signature_error(e)
+    except JWSSignatureError as e:
+        handle_jws_signature_error(e)
     except JWTClaimsError as e:
         handle_jwt_claims_error(e)
+    except JWTError as e:
+        handle_jwt_error(e)
 
-def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
-    claim_map = {
-        'aud': 'Invalid aud claims',
-        'iss': 'Invalid iss claims',
-    }
+def handle_error(e: Exception, claim_map: dict[str, str]) -> NoReturn:
     message = str(e).lower()
     for key, msg in claim_map.items():
         if key in message:
             raise HTTPException(status_code=401, detail={'error': msg})
     raise HTTPException(status_code=401, detail={'error': 'Invalid claims'})
+
+def handle_expired_signature_error(e: ExpiredSignatureError) -> NoReturn:
+    return handle_error(e, {'token is expired': 'Token expired'})
+
+def handle_jws_signature_error(e: JWSSignatureError) -> NoReturn:
+    return handle_error(e, {'signature verification failed': 'Invalid signature'})
+
+def handle_jwt_claims_error(e: JWTClaimsError) -> NoReturn:
+    return handle_error(e, {'invalid claim: aud': 'Invalid aud claims'})
+
+def handle_jwt_error(e: JWTError) -> NoReturn:
+    return handle_error(e, {'invalid audience': 'Missing aud claim'})

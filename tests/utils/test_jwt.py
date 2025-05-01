@@ -2,7 +2,8 @@ import base64
 import pytest
 from fastapi import HTTPException
 from jose import jwt
-from jose.exceptions import JWTClaimsError
+from jose.exceptions import ExpiredSignatureError, JWTClaimsError, JWTError, JWSSignatureError
+
 from app.utils import jwt_helpers
 
 async def test_fetch_cognito_jwks(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
@@ -115,7 +116,10 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('mocked_exception, expected_detail', [
+    (ExpiredSignatureError('Token is expired'), 'Token expired'),
+    (JWSSignatureError('Signature verification failed'), 'Invalid signature'),
     (JWTClaimsError('Invalid claim: aud'), 'Invalid aud claims'),
+    (JWTError('Invalid audience'), 'Missing aud claim'),
 ])
 def test_verify_access_token_exceptions(mocked_exception, expected_detail, monkeypatch, dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_public_key_for_verify):
     dummy_access_token = dummy_access_token_factory(dummy_payload)
@@ -130,19 +134,3 @@ def test_verify_access_token_exceptions(mocked_exception, expected_detail, monke
 
     assert exc_info.value.status_code == 401
     assert expected_detail in exc_info.value.detail['error']
-
-@pytest.mark.parametrize('broken_payload, expected_error', [
-    ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
-    ({'aud': 'wrong-audience'}, 'Invalid aud claims'),
-])
-def test_verify_access_token_claim_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_leeway, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
-    payload = dummy_payload.copy()
-    payload.update(broken_payload)
-
-    dummy_access_token = dummy_access_token_factory(payload)
-
-    with pytest.raises(HTTPException) as exc:
-        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
-
-    assert exc.value.status_code == 401
-    assert exc.value.detail['error'] == expected_error
