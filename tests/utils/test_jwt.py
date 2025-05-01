@@ -145,7 +145,7 @@ def test_verify_access_token_expired(dummy_payload, dummy_access_token_factory, 
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
 
     assert exc.value.status_code == 401
-    assert exc.value.detail['error'] == 'Signature has expired'
+    assert exc.value.detail['error'] == 'Signature has expired.'
 
 def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_second_public_key_for_verify):
     dummy_access_token = dummy_access_token_factory(dummy_payload)
@@ -154,7 +154,7 @@ def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_second_public_key_for_verify)
 
     assert exc.value.status_code == 401
-    assert exc.value.detail['error'] == 'Signature verification failed'
+    assert exc.value.detail['error'] == 'Signature verification failed.'
 
 @pytest.mark.parametrize('broken_payload, expected_error', [
     ({'aud': 'wrong-audience'}, 'Invalid claim: aud'),
