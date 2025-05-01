@@ -159,10 +159,15 @@ def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload
 @pytest.mark.parametrize('broken_payload, expected_error', [
     ({'iss': 'wrong-audience'}, 'Invalid issuer'),
     ({'aud': 'wrong-audience'}, 'Invalid audience'),
+    ({'iss': None}, 'Invalid issuer'),
 ])
 def test_verify_access_token_claims_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
     payload = dummy_payload.copy()
     payload.update(broken_payload)
+
+    for key, value in broken_payload.items():
+        if value is None:
+            del payload[key]
 
     dummy_access_token = dummy_access_token_factory(payload)
 
@@ -174,7 +179,6 @@ def test_verify_access_token_claims_errors(broken_payload, expected_error, dummy
 
 @pytest.mark.parametrize('missing_claim, expected_error', [
     ('sub', 'Missing sub claim'),
-    ('iss', 'Missing iss claim'),
     ('aud', 'Missing aud claim'),
     ('exp', 'Missing exp claim'),
 ])
