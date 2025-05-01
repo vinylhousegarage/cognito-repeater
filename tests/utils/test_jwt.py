@@ -2,6 +2,7 @@ import base64
 import pytest
 from fastapi import HTTPException
 from jose import jwt
+from jose.exceptions import JWTClaimsError
 from app.utils import jwt_helpers
 
 async def test_fetch_cognito_jwks(dummy_jwks_request, fetch_cognito_jwks_httpx_mock):
@@ -112,6 +113,23 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     dummy_access_token = dummy_access_token_factory(dummy_payload)
     result = jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
     assert result == dummy_claims
+
+@pytest.mark.parametrize('mocked_exception, expected_detail', [
+    (JWTClaimsError('Invalid claim: aud'), 'Invalid aud claims'),
+])
+def test_verify_access_token_exceptions(mocked_exception, expected_detail, monkeypatch, dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_public_key_for_verify):
+    dummy_access_token = dummy_access_token_factory(dummy_payload)
+
+    def fake_decode(*args, **kwargs):
+        raise mocked_exception
+
+    monkeypatch.setattr('app.utils.jwt_helpers.jwt.decode', fake_decode)
+
+    with pytest.raises(HTTPException) as exc_info:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
+
+    assert exc_info.value.status_code == 401
+    assert expected_detail in exc_info.value.detail['error']
 
 @pytest.mark.parametrize('broken_payload, expected_error', [
     ({'iss': 'wrong-audience'}, 'Invalid iss claims'),
