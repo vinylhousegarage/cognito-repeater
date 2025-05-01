@@ -117,10 +117,10 @@ def test_verify_access_token(dummy_access_token_factory, dummy_claims_factory, d
     assert result == dummy_claims
 
 @pytest.mark.parametrize('mocked_exception, expected_detail', [
-    (ExpiredSignatureError('Signature has expired'), 'Token expired'),
-    (JWSSignatureError('Signature verification failed'), 'Invalid signature'),
-    (JWTClaimsError('Invalid claim: aud'), 'Invalid aud claims'),
-    (JWTError('Invalid audience'), 'Missing aud claim'),
+    (ExpiredSignatureError('Signature has expired'), 'Signature has expired'),
+    (JWSSignatureError('Signature verification failed'), 'Signature verification failed'),
+    (JWTClaimsError('Invalid claim: aud'), 'Invalid claim: aud'),
+    (JWTError('Invalid audience'), 'Invalid audience'),
 ])
 def test_verify_access_token_exceptions(mocked_exception, expected_detail, monkeypatch, dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_public_key_for_verify):
     dummy_access_token = dummy_access_token_factory(dummy_payload)
@@ -145,7 +145,7 @@ def test_verify_access_token_expired(dummy_payload, dummy_access_token_factory, 
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
 
     assert exc.value.status_code == 401
-    assert exc.value.detail['error'] == 'Token expired'
+    assert exc.value.detail['error'] == 'Signature has expired.'
 
 def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload, dummy_request_for_verify, dummy_second_public_key_for_verify):
     dummy_access_token = dummy_access_token_factory(dummy_payload)
@@ -154,4 +154,19 @@ def test_verify_access_token_signature(dummy_access_token_factory, dummy_payload
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_second_public_key_for_verify)
 
     assert exc.value.status_code == 401
-    assert exc.value.detail['error'] == 'Invalid signature'
+    assert exc.value.detail['error'] == 'Signature verification failed.'
+
+@pytest.mark.parametrize('broken_payload, expected_error', [
+    ({'aud': 'wrong-audience'}, 'Invalid audience'),
+])
+def test_verify_access_token_claims_errors(broken_payload, expected_error, dummy_access_token_factory, dummy_request_for_verify, dummy_payload, dummy_public_key_for_verify):
+    payload = dummy_payload.copy()
+    payload.update(broken_payload)
+
+    dummy_access_token = dummy_access_token_factory(payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == expected_error
