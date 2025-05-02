@@ -53,6 +53,10 @@ def cache_public_key_by_kid(request: Request, kid: str, public_key: RSAPublicKey
         request.app.state.public_keys = {}
     request.app.state.public_keys[kid] = public_key
 
+def log_jwt_error(e: Exception) -> None:
+    print(f'debug-{type(e).__name__}-str(e): {str(e)}')
+    print(f'debug-{type(e).__name__}-type(e): {type(e)}')
+
 def verify_access_token(request: Request, access_token: str, public_key: RSAPublicKey, leeway = 10):
     if public_key is None:
         raise HTTPException(status_code=401, detail={'error': 'Public key not found', 'type': 'MissingPublicKeyError'})
@@ -96,12 +100,17 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
 
     return payload
 
-def log_jwt_error(e: Exception) -> None:
-    print(f'debug-{type(e).__name__}-str(e): {str(e)}')
-    print(f'debug-{type(e).__name__}-type(e): {type(e)}')
-
 def extract_sub(payload: dict) -> str:
     sub = payload.get('sub')
     if not sub or not isinstance(sub, str):
         raise HTTPException(status_code=401, detail={'error': 'Invalid sub claim'})
     return sub
+
+async def verify_and_extract_sub(request: Request, access_token: str) -> str:
+    jwk = await search_jwk_by_kid(access_token, request)
+    bytes_n, bytes_e = decode_jwk_to_bytes(jwk)
+    int_n, int_e = convert_bytes_to_int(bytes_n, bytes_e)
+    public_key = generate_public_key(int_e, int_n)
+    cache_public_key_by_kid(request, jwk['kid'], public_key)
+    payload = verify_access_token(request, access_token, public_key)
+    return extract_sub(payload)
