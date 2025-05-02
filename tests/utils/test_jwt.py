@@ -192,3 +192,13 @@ def test_verify_access_token_missing_required_claims(missing_claim, expected_err
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
+
+def test_verify_access_token_fails_without_public_key(dummy_request_for_verify, dummy_access_token_factory, dummy_payload):
+    public_key = None # simulate missing public_key
+    dummy_access_token = dummy_access_token_factory(dummy_payload)
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, public_key)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Public key not found'
