@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-async def test_me_returns_sub(app_client: AsyncClient, dummy_access_token: str):
+async def test_me_returns_sub(app_client: AsyncClient, dummy_access_token: str, fetch_cognito_jwks_httpx_mock):
     response = await app_client.get(
         '/me',
         headers={'Authorization': f'Bearer {dummy_access_token}'}
