@@ -193,17 +193,12 @@ def test_verify_access_token_missing_required_claims(missing_claim, expected_err
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
 
-def test_verify_access_token_with_unknown_kid_raises_401(dummy_request_for_verify, dummy_payload, dummy_private_key_for_verify_to_pem):
-  invalid_kid = 'unknown-kid'
-  dummy_access_token = jwt.encode(
-      dummy_payload,
-      key=  dummy_private_key_for_verify_to_pem,
-      algorithm = 'RS256',
-      headers = {'kid': invalid_kid},
-  )
+def test_verify_access_token_fails_without_public_key(dummy_request_for_verify, dummy_access_token_factory, dummy_payload):
+    public_key = None # simulate missing public_key
+    dummy_access_token = dummy_access_token_factory(dummy_payload)
 
-  with pytest.raises(HTTPException) as exc:
-      jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token)
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, public_key)
 
-  assert exc.value.status_code == 401
-  assert exc.value.detail['error'] == 'Public key not found for given kid'
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Public key not found for given kid'
