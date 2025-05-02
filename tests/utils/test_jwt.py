@@ -202,3 +202,12 @@ def test_verify_access_token_fails_without_public_key(dummy_request_for_verify, 
 
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == 'Public key not found'
+
+@pytest.mark.parametrize('invalid_token', [
+    '',  # empty string
+])
+def test_verify_access_token_invalid_format(invalid_token, dummy_request_for_verify, dummy_public_key_for_verify):
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, invalid_token, dummy_public_key_for_verify)
+    assert exc.value.status_code == 401
+    assert exc.value.detail['error'] == 'Not enough segments'
