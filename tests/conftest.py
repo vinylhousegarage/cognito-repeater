@@ -166,6 +166,10 @@ def dummy_access_token_factory(dummy_private_key_for_verify_to_pem, dummy_kid):
     return _create_dummy_access_token
 
 @pytest.fixture
+def dummy_access_token(dummy_access_token_factory, dummy_claims):
+    return dummy_access_token_factory(dummy_claims)
+
+@pytest.fixture
 def dummy_payload_factory(
     dummy_access_token_factory,
     dummy_public_key_for_verify,

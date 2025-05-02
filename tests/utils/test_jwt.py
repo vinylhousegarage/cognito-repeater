@@ -110,9 +110,8 @@ def test_cache_public_key_by_kid_overwrites_existing_key(dummy_request, dummy_ki
     jwt_helpers.cache_public_key_by_kid(dummy_request, dummy_kid, dummy_second_public_key)
     assert dummy_request.app.state.public_keys[dummy_kid] == dummy_second_public_key
 
-def test_verify_access_token(dummy_access_token_factory, dummy_payload_factory, dummy_leeway, dummy_claims, dummy_public_key_for_verify, dummy_request_for_verify):
+def test_verify_access_token(dummy_access_token, dummy_payload_factory, dummy_leeway, dummy_claims, dummy_public_key_for_verify, dummy_request_for_verify):
     dummy_payload = dummy_payload_factory(dummy_claims)
-    dummy_access_token = dummy_access_token_factory(dummy_claims)
     result = jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_public_key_for_verify, dummy_leeway)
     assert result == dummy_payload
 
@@ -122,9 +121,7 @@ def test_verify_access_token(dummy_access_token_factory, dummy_payload_factory, 
     (JWTClaimsError('Invalid claim: aud'), 'Invalid claim: aud'),
     (JWTError('Invalid audience'), 'Invalid audience'),
 ])
-def test_verify_access_token_exceptions(mocked_exception, expected_detail, monkeypatch, dummy_access_token_factory, dummy_claims, dummy_request_for_verify, dummy_public_key_for_verify):
-    dummy_access_token = dummy_access_token_factory(dummy_claims)
-
+def test_verify_access_token_exceptions(mocked_exception, expected_detail, monkeypatch, dummy_access_token, dummy_request_for_verify, dummy_public_key_for_verify):
     def fake_decode(*args, **kwargs):
         raise mocked_exception
 
@@ -147,9 +144,7 @@ def test_verify_access_token_expired(dummy_claims, dummy_access_token_factory, d
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == 'Signature has expired.'
 
-def test_verify_access_token_signature(dummy_access_token_factory, dummy_claims, dummy_request_for_verify, dummy_second_public_key_for_verify):
-    dummy_access_token = dummy_access_token_factory(dummy_claims)
-
+def test_verify_access_token_signature(dummy_access_token, dummy_request_for_verify, dummy_second_public_key_for_verify):
     with pytest.raises(HTTPException) as exc:
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, dummy_second_public_key_for_verify)
 
@@ -193,9 +188,8 @@ def test_verify_access_token_missing_required_claims(missing_claim, expected_err
     assert exc.value.status_code == 401
     assert exc.value.detail['error'] == expected_error
 
-def test_verify_access_token_fails_without_public_key(dummy_request_for_verify, dummy_access_token_factory, dummy_claims):
+def test_verify_access_token_fails_without_public_key(dummy_access_token, dummy_request_for_verify):
     public_key = None # simulate missing public_key
-    dummy_access_token = dummy_access_token_factory(dummy_claims)
 
     with pytest.raises(HTTPException) as exc:
         jwt_helpers.verify_access_token(dummy_request_for_verify, dummy_access_token, public_key)
