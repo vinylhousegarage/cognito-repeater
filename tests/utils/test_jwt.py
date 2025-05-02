@@ -210,4 +210,4 @@ def test_verify_access_token_invalid_format(invalid_token, dummy_request_for_ver
     with pytest.raises(HTTPException) as exc:
         jwt_helpers.verify_access_token(dummy_request_for_verify, invalid_token, dummy_public_key_for_verify)
     assert exc.value.status_code == 400
-    assert exc.value.detail['error'] == 'Malformed token'
+    assert exc.value.detail['error'] == 'Not enough segments'
