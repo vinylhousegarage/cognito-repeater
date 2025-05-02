@@ -27,7 +27,7 @@ async def test_create_token_request_payload(monkeypatch, app, dummy_code):
     assert result == payload
 
 async def test_exchange_token(httpx_mock, monkeypatch, app, dummy_code):
-    dummy_payload = {
+    dummy_claims = {
         'url': 'https://example.com/token',
         'data': {'code': 'abc1234'},
         'headers': {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -42,12 +42,12 @@ async def test_exchange_token(httpx_mock, monkeypatch, app, dummy_code):
     }
 
     async def fake_create_token_request_payload(app, code):
-        return dummy_payload
+        return dummy_claims
 
     monkeypatch.setattr(token_helpers, 'create_token_request_payload', fake_create_token_request_payload)
 
     httpx_mock.add_response(
-        url=dummy_payload['url'],
+        url=dummy_claims['url'],
         json=dummy_response_data,
     )
 
