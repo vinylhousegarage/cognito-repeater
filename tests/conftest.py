@@ -145,7 +145,7 @@ def dummy_request_for_verify(dummy_request):
     return dummy_request
 
 @pytest.fixture
-def dummy_payload(dummy_request_for_verify):
+def dummy_claims(dummy_request_for_verify):
     return {
         'sub': 'user-id',
         'iss': dummy_request_for_verify.app.state.metadata['issuer'],
@@ -155,9 +155,9 @@ def dummy_payload(dummy_request_for_verify):
 
 @pytest.fixture
 def dummy_access_token_factory(dummy_private_key_for_verify_to_pem, dummy_kid):
-    def _create_dummy_access_token(dummy_payload: dict) -> str:
+    def _create_dummy_access_token(dummy_claims: dict) -> str:
         dummy_access_token = jwt.encode(
-            dummy_payload,
+            dummy_claims,
             key = dummy_private_key_for_verify_to_pem,
             algorithm = 'RS256',
             headers = {'kid': dummy_kid},
@@ -166,20 +166,20 @@ def dummy_access_token_factory(dummy_private_key_for_verify_to_pem, dummy_kid):
     return _create_dummy_access_token
 
 @pytest.fixture
-def dummy_claims_factory(
+def dummy_payload_factory(
     dummy_access_token_factory,
     dummy_public_key_for_verify,
     dummy_leeway,
 ):
-    def _create_dummy_claims(dummy_payload: dict) -> dict:
-        dummy_access_token = dummy_access_token_factory(dummy_payload)
-        dummy_claims = jwt.decode(
+    def _create_dummy_payload(dummy_claims: dict) -> dict:
+        dummy_access_token = dummy_access_token_factory(dummy_claims)
+        dummy_payload = jwt.decode(
             dummy_access_token,
             dummy_public_key_for_verify,
             algorithms = ['RS256'],
-            audience = dummy_payload['aud'],
-            issuer = dummy_payload['iss'],
+            audience = dummy_claims['aud'],
+            issuer = dummy_claims['iss'],
             options={'verify_exp': True, 'leeway': dummy_leeway},
         )
-        return dummy_claims
-    return _create_dummy_claims
+        return dummy_payload
+    return _create_dummy_payload
