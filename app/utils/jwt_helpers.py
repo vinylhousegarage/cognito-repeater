@@ -54,6 +54,8 @@ def cache_public_key_by_kid(request: Request, kid: str, public_key: RSAPublicKey
     request.app.state.public_keys[kid] = public_key
 
 def verify_access_token(request: Request, access_token: str, public_key: RSAPublicKey, leeway = 10):
+    if public_key is None:
+        raise HTTPException(status_code=401, detail={'error': 'public key not found given kid', 'type': 'MissingPublicKeyError'})
     try:
         claims = jwt.decode(
             access_token,
