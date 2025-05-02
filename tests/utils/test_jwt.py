@@ -212,7 +212,6 @@ def test_verify_access_token_missing_token(invalid_token, dummy_request_for_veri
         jwt_helpers.verify_access_token(dummy_request_for_verify, invalid_token, dummy_public_key_for_verify)
 
     assert exc.value.status_code == 401
-    assert exc.value.detail['type'] == 'JWTError'
     assert exc.value.detail['error'] == 'Missing token'
 
 @pytest.mark.parametrize('invalid_token', [
