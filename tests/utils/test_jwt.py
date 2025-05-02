@@ -231,3 +231,13 @@ def test_verify_access_token_with_two_part_token(dummy_request_for_verify, dummy
 
     assert exc.value.status_code == 401
     assert 'Not enough segments' in exc.value.detail['error']
+
+@pytest.mark.parametrize('invalid_sub', [None, '', 123, {}, []])
+def test_extract_sub_raises_for_invalid_sub(invalid_sub):
+    payload = {'sub': invalid_sub}
+
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.extract_sub(payload)
+
+    assert exc.value.status_code == 401
+    assert exc.value.detail == {'error': 'Invalid sub claim'}
