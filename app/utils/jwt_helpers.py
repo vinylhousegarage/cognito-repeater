@@ -99,3 +99,9 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
 def log_jwt_error(e: Exception) -> None:
     print(f'debug-{type(e).__name__}-str(e): {str(e)}')
     print(f'debug-{type(e).__name__}-type(e): {type(e)}')
+
+def extract_sub(payload: dict) -> str:
+    sub = payload.get('sub')
+    if not sub or not isinstance(sub, str):
+        raise HTTPException(status_code=401, detail={'error': 'Invalid sub claim'})
+    return sub
