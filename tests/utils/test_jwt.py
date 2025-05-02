@@ -214,3 +214,14 @@ def test_verify_access_token_missing_token(invalid_token, dummy_request_for_veri
     assert exc.value.status_code == 401
     assert exc.value.detail['type'] == 'JWTError'
     assert exc.value.detail['error'] == 'Missing token'
+
+@pytest.mark.parametrize('invalid_token', [
+    'abc.def',  # simulate a 2-part token (should be 3)
+    'abc.def.ghi.jkl',  # simulate a 4-part token (too many parts)
+    'abc.def.@@@',  # invalid base64 format
+])
+def test_verify_access_token_invalid_format(invalid_token, dummy_request_for_verify, dummy_public_key_for_verify):
+    with pytest.raises(HTTPException) as exc:
+        jwt_helpers.verify_access_token(dummy_request_for_verify, invalid_token, dummy_public_key_for_verify)
+    assert exc.value.status_code == 400
+    assert exc.value.detail['error'] == 'Malformed token'
