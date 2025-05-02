@@ -59,7 +59,7 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
     if not access_token:
         raise HTTPException(status_code=401, detail={'error': 'Missing token', 'type': 'JWTError'})
     try:
-        claims = jwt.decode(
+        payload = jwt.decode(
             access_token,
             public_key,
             algorithms = ['RS256'],
@@ -85,7 +85,7 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
 
     required_claims = ['sub', 'iss', 'aud', 'exp']
     for claim in required_claims:
-        if claim not in claims:
+        if claim not in payload:
             raise HTTPException(
                 status_code=401,
                 detail={
@@ -94,7 +94,7 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
                 }
             )
 
-    return claims
+    return payload
 
 def log_jwt_error(e: Exception) -> None:
     print(f'debug-{type(e).__name__}-str(e): {str(e)}')
