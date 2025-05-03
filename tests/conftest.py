@@ -78,10 +78,10 @@ def dummy_metadata_url_request(dummy_request):
 
 @pytest.fixture
 def cache_cognito_metadata_httpx_mock(httpx_mock, dummy_metadata_url_request):
-    dummy_metadata = dummy_metadata_url_request.app.state.config.AWS_COGNITO_METADATA_URL
+    dummy_metadata_url = dummy_metadata_url_request.app.state.config.AWS_COGNITO_METADATA_URL
     httpx_mock.add_response(
-        url = dummy_metadata,
-        json={'issuer': 'https://example.com'},
+        url = dummy_metadata_url,
+        json = {'issuer': 'https://example.com'},
     )
 
 @pytest.fixture
