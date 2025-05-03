@@ -1,4 +1,4 @@
-from tests.conftest.common_fixture import (
+from tests.fixtures.common_fixture import (
     app,
     app_client,
     async_client,
@@ -6,7 +6,7 @@ from tests.conftest.common_fixture import (
     test_client,
 )
 
-from tests.conftest.jwt_unit_fixtures import (
+from tests.fixtures.jwt_unit_fixtures import (
     dummy_kid,
     dummy_jwks_metadata,
     dummy_app_attr_state,
@@ -34,7 +34,7 @@ from tests.conftest.jwt_unit_fixtures import (
     dummy_payload_factory,
 )
 
-from tests.conftest.me_fixtures import (
+from tests.fixtures.me_fixtures import (
     test_kid,
     test_private_key,
     test_private_key_pem,
