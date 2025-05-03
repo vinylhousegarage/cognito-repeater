@@ -6,7 +6,7 @@ from app.utils.jwt_helpers import verify_and_extract_sub
 from app.utils.token_helpers import exchange_token
 
 router = APIRouter()
-bearer_schema = HTTPBearer()
+bearer_scheme = HTTPBearer()
 
 @router.get('/login')
 async def login(request: Request) -> RedirectResponse:
@@ -23,7 +23,7 @@ async def callback(request: Request) -> dict:
     return tokens
 
 @router.get('/me')
-async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_schema)) -> dict:
+async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
     sub = await verify_and_extract_sub(request, token.credentials)
     return {'user': sub}
 
