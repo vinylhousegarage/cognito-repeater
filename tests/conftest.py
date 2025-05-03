@@ -191,10 +191,12 @@ def dummy_payload_factory(
 @pytest.fixture
 def cache_cognito_metadata_httpx_mock(app, httpx_mock):
     metadata_url = 'https://example.com/.well-known/openid-configuration'
+    user_pool_client_id = 'user-pool-client-id'
     jwks_uri = 'https://example.com/jwks'
 
     app.state.config = SimpleNamespace()
     app.state.config.AWS_COGNITO_METADATA_URL = metadata_url
+    app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID = user_pool_client_id
 
     httpx_mock.add_response(
         url = metadata_url,
