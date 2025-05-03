@@ -71,20 +71,6 @@ def fetch_cognito_jwks_httpx_mock(dummy_jwks_request, httpx_mock):
     )
 
 @pytest.fixture
-def dummy_metadata_url_request(dummy_request):
-    dummy_request.app.state.config = SimpleNamespace()
-    dummy_request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com'
-    return dummy_request
-
-@pytest.fixture
-def cache_cognito_metadata_httpx_mock(httpx_mock, dummy_metadata_url_request):
-    dummy_metadata_url = dummy_metadata_url_request.app.state.config.AWS_COGNITO_METADATA_URL
-    httpx_mock.add_response(
-        url = dummy_metadata_url,
-        json = {'issuer': 'https://example.com'},
-    )
-
-@pytest.fixture
 def dummy_e_int():
     return 65537
 
@@ -202,3 +188,22 @@ def dummy_payload_factory(
         return dummy_payload
     return _create_dummy_payload
 
+@pytest.fixture
+def integration_test_request(app):
+    request = SimpleNamespace()
+    request.app = app
+    return request
+
+@pytest.fixture
+def dummy_metadata_url_request(integration_test_request):
+    integration_test_request.app.state.config = SimpleNamespace()
+    integration_test_request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com'
+    return integration_test_request
+
+@pytest.fixture
+def cache_cognito_metadata_httpx_mock(httpx_mock, dummy_metadata_url_request):
+    dummy_metadata_url = dummy_metadata_url_request.app.state.config.AWS_COGNITO_METADATA_URL
+    httpx_mock.add_response(
+        url = dummy_metadata_url,
+        json = {'issuer': 'https://example.com'},
+    )
