@@ -194,6 +194,9 @@ def cache_cognito_metadata_httpx_mock(app, httpx_mock):
     app.state.config = SimpleNamespace()
     app.state.config.AWS_COGNITO_METADATA_URL = url
     httpx_mock.add_response(
-        url=url,
-        json={'issuer': 'https://example.com'}
+        url = url,
+        json = {
+            'issuer': 'https://example.com',
+            'jwks': 'https://example.com/jwks',
+        }
     )
