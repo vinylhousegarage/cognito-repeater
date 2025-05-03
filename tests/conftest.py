@@ -189,21 +189,11 @@ def dummy_payload_factory(
     return _create_dummy_payload
 
 @pytest.fixture
-def integration_test_request(app):
-    request = SimpleNamespace()
-    request.app = app
-    return request
-
-@pytest.fixture
-def dummy_metadata_url_request(integration_test_request):
-    integration_test_request.app.state.config = SimpleNamespace()
-    integration_test_request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com'
-    return integration_test_request
-
-@pytest.fixture
-def cache_cognito_metadata_httpx_mock(httpx_mock, dummy_metadata_url_request):
-    dummy_metadata_url = dummy_metadata_url_request.app.state.config.AWS_COGNITO_METADATA_URL
+def cache_cognito_metadata_httpx_mock(app, httpx_mock):
+    url = 'https://example.com/.well-known/openid-configuration'
+    app.state.config = SimpleNamespace()
+    app.state.config.AWS_COGNITO_METADATA_URL = url
     httpx_mock.add_response(
-        url = dummy_metadata_url,
-        json = {'issuer': 'https://example.com'},
+        url=url,
+        json={'issuer': 'https://example.com'}
     )
