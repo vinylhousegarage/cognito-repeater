@@ -190,13 +190,25 @@ def dummy_payload_factory(
 
 @pytest.fixture
 def cache_cognito_metadata_httpx_mock(app, httpx_mock):
-    url = 'https://example.com/.well-known/openid-configuration'
+    metadata_url = 'https://example.com/.well-known/openid-configuration'
+    jwks_uri = 'https://example.com/jwks'
+
     app.state.config = SimpleNamespace()
-    app.state.config.AWS_COGNITO_METADATA_URL = url
+    app.state.config.AWS_COGNITO_METADATA_URL = metadata_url
+
     httpx_mock.add_response(
-        url = url,
+        url = metadata_url,
         json = {
             'issuer': 'https://example.com',
             'jwks_uri': 'https://example.com/jwks',
+        }
+    )
+
+    httpx_mock.add_response(
+        url = jwks_uri,
+        json = {
+            'keys': [
+                {'kid': 'dummy-kid', 'kty': 'RSA', 'n': 'dummy-n', 'e': 'dummy-e'}
+            ]
         }
     )
