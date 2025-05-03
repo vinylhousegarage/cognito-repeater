@@ -201,6 +201,14 @@ def test_private_key():
     )
 
 @pytest.fixture
+def test_private_key_pem(test_private_key):
+    return test_private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+
+@pytest.fixture
 def test_claims():
     return {
         'sub': 'user-id',
@@ -210,10 +218,10 @@ def test_claims():
     }
 
 @pytest.fixture
-def test_access_token(test_claims, test_private_key, test_kid):
+def test_access_token(test_claims, test_private_key_pem, test_kid):
         return jwt.encode(
             test_claims,
-            key=test_private_key,
+            key=test_private_key_pem,
             algorithm='RS256',
             headers={'kid': test_kid},
         )
