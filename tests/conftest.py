@@ -19,15 +19,6 @@ async def app_client(app):
         yield app_client
 
 @pytest.fixture
-def cache_cognito_metadata_httpx_mock(httpx_mock, app_client):
-    app_client.app.state.config = SimpleNamespace()
-    app_client.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com'
-    httpx_mock.add_response(
-        url='https://example.com',
-        json={'issuer': 'https://example.com'},
-    )
-
-@pytest.fixture
 async def async_client():
     async with AsyncClient() as async_client:
         yield async_client
@@ -84,6 +75,14 @@ def dummy_metadata_url_request(dummy_request):
     dummy_request.app.state.config = SimpleNamespace()
     dummy_request.app.state.config.AWS_COGNITO_METADATA_URL = 'https://example.com'
     return dummy_request
+
+@pytest.fixture
+def cache_cognito_metadata_httpx_mock(httpx_mock, dummy_metadata_url_request):
+    dummy_metadata = dummy_metadata_url_request.app.state.config.AWS_COGNITO_METADATA_URL
+    httpx_mock.add_response(
+        url = dummy_metadata,
+        json={'issuer': 'https://example.com'},
+    )
 
 @pytest.fixture
 def dummy_e_int():
@@ -202,3 +201,4 @@ def dummy_payload_factory(
         )
         return dummy_payload
     return _create_dummy_payload
+
