@@ -197,6 +197,6 @@ def cache_cognito_metadata_httpx_mock(app, httpx_mock):
         url = url,
         json = {
             'issuer': 'https://example.com',
-            'jwks': 'https://example.com/jwks',
+            'jwks_uri': 'https://example.com/jwks',
         }
     )
