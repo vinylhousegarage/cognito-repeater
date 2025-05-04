@@ -3,7 +3,11 @@ from app.config import Config
 from app.routers import auth, errors, health
 
 def create_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
 
     config = Config()
     app.state.config = config
