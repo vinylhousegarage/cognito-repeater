@@ -1,7 +1,8 @@
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from app.utils.auth_helpers import generate_cognito_logout_url, redirect_to_cognito_login
+from app.utils.auth_helpers import cache_cognito_metadata, generate_cognito_logout_url, redirect_to_cognito_login
 from app.utils.jwt_helpers import verify_and_extract_sub
 from app.utils.token_helpers import exchange_token
 
@@ -27,6 +28,13 @@ async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends
     sub = await verify_and_extract_sub(request, token.credentials)
     return {'user': sub}
 
+@router.get('/sub')
+async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
+    metadata = await cache_cognito_metadata(request)
+    headers = {'Authorization': f'Bearer {token.credentials}'}
+    async with httpx.AsyncClient() as client:
+        response = await client.get(metadata['userinfo'], headers=headers)
+    return {'sub': response.json()['sub']}
 
 @router.get('/logout')
 async def logout(request: Request) -> RedirectResponse:
