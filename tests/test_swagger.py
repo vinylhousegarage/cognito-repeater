@@ -21,3 +21,7 @@ async def test_redoc_with_valid_token(app_client, test_access_token, cache_cogni
     )
     assert response.status_code == 200
     assert 'ReDoc' in response.text
+
+async def test_open_api_json_is_disabled(app_client):
+    response = await app_client.get('/openapi.json')
+    assert response.status_code == 403
