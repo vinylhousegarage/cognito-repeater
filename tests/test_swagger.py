@@ -14,6 +14,22 @@ async def test_docs_with_valid_token(app, httpx_mock, app_client, dummy_access_t
         json={'jwks_uri': jwks_url}
     )
 
+    httpx_mock.add_response(
+        url=jwks_url,
+        json={
+            'keys': [
+                {
+                    'kid': 'dummy-kid',
+                    'kty': 'RSA',
+                    'alg': 'RS256',
+                    'use': 'sig',
+                    'n': 'base64url-encoded-n',
+                    'e': 'base64url-encoded-e'
+                }
+            ]
+        }
+    )
+
     response = await app_client.get(
         '/docs',
         headers={'Authorization': f'Bearer {dummy_access_token}'}
