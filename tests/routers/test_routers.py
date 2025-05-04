@@ -7,7 +7,7 @@ client = TestClient(app)
 
 @pytest.mark.parametrize('path,expected_status', [
     ('/health', 200),
-    ('/error/404', 200),
+    ('/error/404', 404),
 ])
 def test_routes_status_code(path, expected_status):
     response = client.get(path, follow_redirects=False)
