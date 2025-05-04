@@ -34,7 +34,7 @@ async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depend
     headers = {'Authorization': f'Bearer {token.credentials}'}
     async with httpx.AsyncClient() as client:
         response = await client.get(metadata['userinfo'], headers=headers)
-    return response.json()['sub']
+    return {'sub': response.json()['sub']}
 
 @router.get('/logout')
 async def logout(request: Request) -> RedirectResponse:
