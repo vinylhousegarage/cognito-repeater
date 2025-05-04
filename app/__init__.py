@@ -1,13 +1,18 @@
 from fastapi import FastAPI
 from app.config import Config
-from app.routers import auth, errors, health
+from app.routers import api_docs, auth, errors, health
 
 def create_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
 
     config = Config()
     app.state.config = config
 
+    app.include_router(api_docs.router)
     app.include_router(auth.router)
     app.include_router(errors.router)
     app.include_router(health.router)
