@@ -114,3 +114,11 @@ async def verify_and_extract_sub(request: Request, access_token: str) -> str:
     cache_public_key_by_kid(request, jwk['kid'], public_key)
     payload = verify_access_token(request, access_token, public_key)
     return extract_sub(payload)
+
+async def verify_access_token_only(request: Request, access_token: str) -> None:
+    jwk = await search_jwk_by_kid(access_token, request)
+    bytes_n, bytes_e = decode_jwk_to_bytes(jwk)
+    int_n, int_e = convert_bytes_to_int(bytes_n, bytes_e)
+    public_key = generate_public_key(int_e, int_n)
+    cache_public_key_by_kid(request, jwk['kid'], public_key)
+    verify_access_token(request, access_token, public_key)
