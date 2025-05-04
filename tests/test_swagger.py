@@ -4,11 +4,12 @@ async def test_docs_is_disabled(app_client):
 
 async def test_docs_with_valid_token(app, httpx_mock, app_client, dummy_access_token):
     metadata_url = 'https://example.com/metadata_url'
+    user_pool_client_id = 'client-id'
     jwks_url = 'https://example.com/jwks'
 
     app.state.config = type('Config', (), {})()
     app.state.config.AWS_COGNITO_METADATA_URL = metadata_url
-
+    app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID = user_pool_client_id
     httpx_mock.add_response(
         url=metadata_url,
         json={'jwks_uri': jwks_url}
