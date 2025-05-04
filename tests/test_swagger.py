@@ -9,3 +9,7 @@ async def test_docs_with_valid_token(app_client, test_access_token, cache_cognit
     )
     assert response.status_code == 200
     assert 'Swagger UI' in response.text
+
+async def test_redoc_is_disabled(app_client):
+    response = await app_client.get('/redoc')
+    assert response.status_code == 403
