@@ -34,4 +34,4 @@ async def test_openapi_with_valid_token(app_client, test_access_token, cache_cog
     assert response.status_code == 200
     data = response.json()
     assert data['openapi'].startswith('3.')
-    assert data['info']['title'] == 'cognito-repeater'
+    assert data['info']['title'] == 'FastAPI'
