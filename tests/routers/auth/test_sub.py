@@ -1,12 +1,11 @@
-from httpx import AsyncClient
 from pytest_httpx import HTTPXMock
 
-async def test_sub_returns_sub_when_userinfo_valid(app_client: AsyncClient, httpx_mock: HTTPXMock):
+async def test_sub_returns_sub_when_userinfo_valid(app, app_client, httpx_mock: HTTPXMock):
     metadata_url = 'https://example.com/metadata_url'
     userinfo_url = 'https://example.com/userinfo'
 
-    app_client.app.state.config = type('Config', (), {})()
-    app_client.app.state.config.AWS_COGNITO_METADATA_URL = metadata_url
+    app.state.config = type('Config', (), {})()
+    app.state.config.AWS_COGNITO_METADATA_URL = metadata_url
 
     httpx_mock.add_response(
         url=metadata_url,
