@@ -10,9 +10,13 @@ async def test_docs_with_valid_token(app, httpx_mock, app_client, dummy_access_t
     app.state.config = type('Config', (), {})()
     app.state.config.AWS_COGNITO_METADATA_URL = metadata_url
     app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID = user_pool_client_id
+
     httpx_mock.add_response(
         url=metadata_url,
-        json={'jwks_uri': jwks_url}
+        json={
+            'issuer': 'https://example.com',
+            'jwks_uri': jwks_url
+        }
     )
 
     httpx_mock.add_response(
