@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from mangum import Mangum
 from app.config import Config
 from app.routers import api_docs, auth, errors, health
 
@@ -19,6 +18,3 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
 
     return app
-
-app = create_app()
-handler = Mangum(app)
