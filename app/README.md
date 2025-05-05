@@ -29,3 +29,7 @@
 - /docs：Swagger UI 仕様の GUI ドキュメント
 - /redoc：ReDoc 形式 のドキュメント
 - /openapi.json：OpenAPI 仕様の JSON ファイル
+
+## ライセンス
+
+このアプリケーションは [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
