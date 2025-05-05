@@ -6,7 +6,7 @@ async def test_metadata_response(app_client: AsyncClient):
     assert response.status_code == 200
     data = response.json()
 
-    metadata = MetadataResponse(**data)
+    _ = MetadataResponse(**data)  # Validate response structure
 
     for field_name, value in data.items():
         assert value.startswith('/'), f"{field_name} does not start with '/'"
