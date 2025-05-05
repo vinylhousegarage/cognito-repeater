@@ -30,4 +30,3 @@ def test_metadata_response_invalid_path():
             openapi_url='/openapi.json'
         )
     assert "must start with '/'" in str(exc.value)
-
