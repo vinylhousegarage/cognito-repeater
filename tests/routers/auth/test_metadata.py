@@ -1,4 +1,4 @@
-from app.routers.api_docs import MetadataResponse
+from app.model import MetadataResponse
 
 def test_metadata_response_valid():
     response = MetadataResponse(
