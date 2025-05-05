@@ -25,8 +25,13 @@ async def protected_openapi(request: Request, token: HTTPAuthorizationCredential
     access_token = token.credentials
     await verify_access_token_only(request, access_token)
     app = request.app
-    return JSONResponse(get_openapi(
+    openapi_schema = get_openapi(
         title=app.title,
         version=app.version,
         routes=app.routes,
-    ))
+    )
+    openapi_schema['info']['license'] = {
+        'name': 'MIT License',
+        'url': 'https://opensource.org/licenses/MIT'
+    }
+    return JSONResponse(openapi_schema)
