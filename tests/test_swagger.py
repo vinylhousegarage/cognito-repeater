@@ -35,3 +35,5 @@ async def test_openapi_with_valid_token(app_client, test_access_token, cache_cog
     data = response.json()
     assert data['openapi'].startswith('3.')
     assert data['info']['title'] == 'FastAPI'
+    assert data['info']['license']['name'] == 'MIT License'
+    assert data['info']['license']['url'] == 'https://opensource.org/licenses/MIT'
