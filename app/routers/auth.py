@@ -29,7 +29,7 @@ async def login(request: Request) -> RedirectResponse:
     return await redirect_to_cognito_login(request)
 
 @router.get('/callback')
-async def callback(request: Request, include_in_scheme=False) -> dict:
+async def callback(request: Request, include_in_schema=False) -> dict:
     code = request.query_params.get('code')
     if not code:
         raise HTTPException(status_code=400, detail={'error': 'missing_code'})
