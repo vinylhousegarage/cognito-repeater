@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 class MetadataResponse(BaseModel):
     login_endpoint: str
@@ -11,8 +11,11 @@ class MetadataResponse(BaseModel):
     redoc_url: str
     openapi_url: str
 
-    @validator('*')
-    def must_start_with_slash(cls, v, field):
+    @field_validator('*', mode='before')
+    @classmethod
+    def must_start_with_slash(cls, v, info):
+        if not isinstance(v, str):
+            raise TypeError(f'{info.field_name} must be a string')
         if not v.startswith('/'):
-            raise ValueError(f"{field.name} must start with '/'")
+            raise ValueError(f"{info.field_name} must start with '/'")
         return v
