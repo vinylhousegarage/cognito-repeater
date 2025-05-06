@@ -43,7 +43,7 @@ async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends
     sub = await verify_and_extract_sub(request, token.credentials)
     return {'user': sub}
 
-@router.get('/sub')
+@router.get('/userinfo')
 async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
     metadata = await cache_cognito_metadata(request)
     headers = {'Authorization': f'Bearer {token.credentials}'}
