@@ -9,13 +9,12 @@ async def fetch_cognito_metadata(client: httpx.AsyncClient, metadata_url: str) -
     return response.json()
 
 async def cache_cognito_metadata(request: Request) -> dict:
-    app = request.app
-    if not hasattr(app.state, 'metadata'):
+    if not hasattr(request.app.state, 'metadata'):
         async with httpx.AsyncClient() as client:
-            app.state.metadata = await fetch_cognito_metadata(
-              client, app.state.config.AWS_COGNITO_METADATA_URL
+            request.app.state.metadata = await fetch_cognito_metadata(
+              client, request.app.state.config.AWS_COGNITO_METADATA_URL
             )
-    return app.state.metadata
+    return request.app.state.metadata
 
 async def redirect_to_cognito_login(request: Request) -> RedirectResponse:
     config = request.app.state.config
