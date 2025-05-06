@@ -4,11 +4,10 @@ from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
 
 async def create_token_request_payload(request: Request, code: str) -> dict:
-    app = request.app
-    metaadata = await cache_cognito_metadata(app)
+    metaadata = await cache_cognito_metadata(request)
     url = metaadata['token_endpoint']
 
-    config = app.state.config
+    config = request.app.state.config
     data = {
         'code': code,
         'redirect_uri': config.AWS_COGNITO_REDIRECT_URI,
