@@ -1,6 +1,6 @@
 from pytest_httpx import HTTPXMock
 
-async def test_sub_returns_sub_when_userinfo_valid(app, app_client, httpx_mock: HTTPXMock):
+async def test_user_returns_sub_when_userinfo_valid(app, app_client, httpx_mock: HTTPXMock):
     metadata_url = 'https://example.com/metadata_url'
     userinfo_url = 'https://example.com/userinfo'
 
@@ -9,7 +9,7 @@ async def test_sub_returns_sub_when_userinfo_valid(app, app_client, httpx_mock: 
 
     httpx_mock.add_response(
         url=metadata_url,
-        json={'userinfo': userinfo_url}
+        json={'userinfo_endpoint': userinfo_url}
     )
     httpx_mock.add_response(
         url=userinfo_url,
