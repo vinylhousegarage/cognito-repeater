@@ -39,7 +39,7 @@ async def callback(request: Request) -> dict:
     return tokens
 
 @router.get('/token')
-async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
+async def token(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
     sub = await verify_and_extract_sub(request, token.credentials)
     return {'user': sub}
 
