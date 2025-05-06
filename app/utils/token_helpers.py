@@ -1,7 +1,9 @@
+from fastapi import HTTPException, Request
 from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
 
-async def create_token_request_payload(app, code):
+async def create_token_request_payload(request: Request, code: str) -> dict:
+    app = request.app
     metaadata = await cache_cognito_metadata(app)
     url = metaadata['token_endpoint']
 
@@ -20,14 +22,18 @@ async def create_token_request_payload(app, code):
 
     return payload
 
-async def exchange_token(app, code: str) -> dict:
-    payload = await create_token_request_payload(app, code)
+async def exchange_token(request: Request, code: str) -> dict:
+    payload = await create_token_request_payload(request, code)
     url = payload['url']
     data = payload['data']
     headers = payload['headers']
 
     async with AsyncClient() as client:
-        response = await client.post(url, data=data, headers=headers)
-        response.raise_for_status()
+        try:
+            response = await client.post(url, data=data, headers=headers)
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            print(f'[ERROR] Token exchange failed: {e.response.status_code} - {e.response.text}')
+            raise HTTPException(status_code=502, detail={'error': 'Token exchange failed'})
 
     return response.json()
