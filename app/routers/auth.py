@@ -44,11 +44,11 @@ async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends
     return {'user': sub}
 
 @router.get('/user')
-async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
+async def user(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
     metadata = await cache_cognito_metadata(request)
     headers = {'Authorization': f'Bearer {token.credentials}'}
     async with httpx.AsyncClient() as client:
-        response = await client.get(metadata['userinfo'], headers=headers)
+        response = await client.get(metadata['userinfo_endpoint'], headers=headers)
     return {'sub': response.json()['sub']}
 
 @router.get('/logout')
