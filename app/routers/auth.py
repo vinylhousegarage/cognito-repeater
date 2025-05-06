@@ -28,8 +28,8 @@ def get_metadata():
 async def login(request: Request) -> RedirectResponse:
     return await redirect_to_cognito_login(request)
 
-@router.get('/callback')
-async def callback(request: Request, include_in_schema=False) -> dict:
+@router.get('/callback', include_in_schema=False)
+async def callback(request: Request) -> dict:
     code = request.query_params.get('code')
     if not code:
         raise HTTPException(status_code=400, detail={'error': 'missing_code'})
@@ -55,3 +55,7 @@ async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depend
 async def logout(request: Request) -> RedirectResponse:
     logout_url = await generate_cognito_logout_url(request)
     return RedirectResponse(url=logout_url)
+
+@router.get('/logout/redirect', include_in_schema=False)
+def logout_redirect() -> dict:
+    return {'message': 'Logout successful'}
