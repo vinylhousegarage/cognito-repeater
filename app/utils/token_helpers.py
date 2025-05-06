@@ -4,8 +4,8 @@ from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
 
 async def create_token_request_payload(request: Request, code: str) -> dict:
-    metaadata = await cache_cognito_metadata(request)
-    url = metaadata['token_endpoint']
+    metadata = await cache_cognito_metadata(request)
+    url = metadata['token_endpoint']
 
     config = request.app.state.config
     data = {
