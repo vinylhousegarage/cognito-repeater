@@ -15,8 +15,8 @@ def get_metadata():
     return {
         'login_endpoint': '/login',
         'logout_endpoint': '/logout',
-        'verify_access_token_endpoint': '/me',
-        'verify_userinfo_endpoint': '/sub',
+        'verify_access_token_endpoint': '/token',
+        'verify_userinfo_endpoint': '/user',
         'health_check_endpoint': '/health',
         'simulate_404_endpoint': '/error/404',
         'docs_url': '/docs',
@@ -38,12 +38,12 @@ async def callback(request: Request) -> dict:
 
     return tokens
 
-@router.get('/me')
+@router.get('/token')
 async def get_me(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
     sub = await verify_and_extract_sub(request, token.credentials)
     return {'user': sub}
 
-@router.get('/userinfo')
+@router.get('/user')
 async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> dict:
     metadata = await cache_cognito_metadata(request)
     headers = {'Authorization': f'Bearer {token.credentials}'}
