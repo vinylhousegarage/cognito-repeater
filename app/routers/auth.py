@@ -55,3 +55,7 @@ async def get_sub(request: Request, token: HTTPAuthorizationCredentials = Depend
 async def logout(request: Request) -> RedirectResponse:
     logout_url = await generate_cognito_logout_url(request)
     return RedirectResponse(url=logout_url)
+
+@router.get('/logout/redirect')
+def logout_redirect() -> dict:
+    return {'message': 'Logout successful'}
