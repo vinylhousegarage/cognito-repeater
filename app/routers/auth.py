@@ -34,7 +34,7 @@ async def callback(request: Request) -> dict:
     if not code:
         raise HTTPException(status_code=400, detail={'error': 'missing_code'})
 
-    tokens = await exchange_token(request.app, code)
+    tokens = await exchange_token(request, code)
 
     return tokens
 
