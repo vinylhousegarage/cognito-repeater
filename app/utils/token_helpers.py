@@ -1,3 +1,4 @@
+import httpx
 from fastapi import HTTPException, Request
 from httpx import AsyncClient
 from app.utils.auth_helpers import cache_cognito_metadata
