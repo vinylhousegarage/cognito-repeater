@@ -18,7 +18,7 @@ async def test_sub_returns_sub_when_userinfo_valid(app, app_client, httpx_mock: 
     )
 
     response = await app_client.get(
-        '/userinfo',
+        '/user',
         headers={'Authorization': 'Bearer dummy-access-token'}
     )
 
