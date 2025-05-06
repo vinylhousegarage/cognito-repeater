@@ -1,7 +1,7 @@
 import app.routers.auth
 from httpx import AsyncClient
 
-async def test_callback_missing_code(app_client: AsyncClient):
+async def test_callback_endpoint_missing_code(app_client: AsyncClient):
     response = await app_client.get('/callback')
     assert response.status_code == 400
     assert response.json() == {
@@ -10,7 +10,7 @@ async def test_callback_missing_code(app_client: AsyncClient):
             },
         }
 
-async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
+async def test_callback_endpoint_with_code(app_client: AsyncClient, monkeypatch):
     async def fake_exchange_token(app, code: str) -> dict:
         return {
             'id_token': 'dummy',
@@ -28,7 +28,7 @@ async def test_callback_with_code(app_client: AsyncClient, monkeypatch):
             'refresh_token': 'dummy',
         }
 
-async def test_callback_returns_json_response(app_client: AsyncClient, monkeypatch):
+async def test_callback_endpoint_returns_json_response(app_client: AsyncClient, monkeypatch):
     dummy_response_data = {
         'access_token': 'dummy_access_token',
         'id_token': 'dummy_id_token',

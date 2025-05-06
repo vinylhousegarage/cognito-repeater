@@ -3,7 +3,7 @@ from fastapi import Request
 from fastapi.responses import RedirectResponse
 from httpx import AsyncClient
 
-async def test_login_redirect(app_client: AsyncClient, monkeypatch) -> None:
+async def test_login_endpoint_redirect(app_client: AsyncClient, monkeypatch) -> None:
     async def fake_redirect(request: Request) -> RedirectResponse:
         return RedirectResponse(url='https://example.com/login')
 

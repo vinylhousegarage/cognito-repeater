@@ -1,7 +1,7 @@
 import app.routers.auth
 from httpx import AsyncClient
 
-async def test_logout_returns_redirect(app_client: AsyncClient, monkeypatch):
+async def test_logout_endpoint_returns_redirect(app_client: AsyncClient, monkeypatch):
     dummy_url = 'https://example.com/cognito/logout/?cleint_id=abc'
 
     async def fake_generate_cognito_logout_url(*args, **kwargs):
