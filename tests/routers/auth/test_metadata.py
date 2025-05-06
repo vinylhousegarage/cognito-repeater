@@ -1,7 +1,7 @@
 from httpx import AsyncClient
 from app.model import MetadataResponse
 
-async def test_metadata_response(app_client: AsyncClient):
+async def test_metadata_endpoint_response(app_client: AsyncClient):
     response = await app_client.get('/metadata')
     assert response.status_code == 200
     data = response.json()
