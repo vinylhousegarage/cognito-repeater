@@ -1,3 +1,4 @@
+import sys
 import logging
 import subprocess
 from mangum import Mangum
@@ -8,6 +9,7 @@ logger.setLevel(logging.INFO)
 
 def log_package_versions():
     logger.info('log_package_versions() was called!')
+    logger.info('Python version: %s', sys.version)
     try:
         result = subprocess.run(['pip', 'freeze'], capture_output=True, text=True, check=True)
         logger.info('Installed packages:\n%s', result.stdout)
