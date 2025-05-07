@@ -1,7 +1,12 @@
 from fastapi import APIRouter
+from fastapi.responses import RedirectResponse
 from app.model import MetadataResponse
 
 router = APIRouter()
+
+@router.get('/')
+def root():
+    return RedirectResponse(url='/login')
 
 @router.get('/health')
 def health_check():
