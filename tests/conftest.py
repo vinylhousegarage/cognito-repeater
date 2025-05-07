@@ -34,7 +34,7 @@ from tests.fixtures.jwt_unit_fixtures import (  # noqa: F401
     dummy_payload_factory,
 )
 
-from tests.fixtures.me_fixtures import (  # noqa: F401
+from tests.fixtures.token_endpoint_fixtures import (  # noqa: F401
     test_kid,
     test_private_key,
     test_private_key_pem,
