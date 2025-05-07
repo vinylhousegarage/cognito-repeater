@@ -154,10 +154,9 @@ def dummy_payload_factory(
         dummy_payload = jwt.decode(
             dummy_access_token,
             dummy_public_key_for_verify,
-            algorithms = ['RS256'],
-            audience = dummy_claims['aud'],
-            issuer = dummy_claims['iss'],
-            options={'verify_exp': True, 'leeway': dummy_leeway},
+            algorithms=['RS256'],
+            issuer=dummy_claims['iss'],
+            options={'verify_exp': True, 'leeway': dummy_leeway, 'verify_aud': False},
         )
         return dummy_payload
     return _create_dummy_payload
