@@ -62,18 +62,25 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
         raise HTTPException(status_code=401, detail={'error': 'Public key not found', 'type': 'MissingPublicKeyError'})
     if not access_token:
         raise HTTPException(status_code=401, detail={'error': 'Missing token', 'type': 'JWTError'})
+
+    expected_client_id = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID
+
     try:
         payload = jwt.decode(
             access_token,
             public_key,
             algorithms = ['RS256'],
-            audience = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
             issuer = request.app.state.metadata['issuer'],
             options = {
                 'verify_exp': True,
+                'verify_aud': False,
                 'leeway': leeway,
             }
         )
+
+        if payload.get('client_id') != expected_client_id:
+            raise HTTPException(status_code=401, detail={'error': 'Invalid client_id claim'})
+
     except ExpiredSignatureError as e:
         log_jwt_error(e)
         raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
@@ -87,7 +94,7 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
         log_jwt_error(e)
         raise HTTPException(status_code=401, detail={'error': str(e), 'type': type(e).__name__})
 
-    required_claims = ['sub', 'iss', 'aud', 'exp']
+    required_claims = ['sub', 'iss', 'client_id', 'exp']
     for claim in required_claims:
         if claim not in payload:
             raise HTTPException(
