@@ -123,7 +123,7 @@ def dummy_claims(dummy_request_for_verify):
     return {
         'sub': 'user-id',
         'iss': dummy_request_for_verify.app.state.metadata['issuer'],
-        'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        'client_id': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
     }
 
