@@ -63,8 +63,6 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
     if not access_token:
         raise HTTPException(status_code=401, detail={'error': 'Missing token', 'type': 'JWTError'})
 
-    expected_client_id = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID
-
     try:
         payload = jwt.decode(
             access_token,
@@ -77,9 +75,6 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
                 'leeway': leeway,
             }
         )
-
-        if payload.get('client_id') != expected_client_id:
-            raise HTTPException(status_code=401, detail={'error': 'Invalid client_id claim'})
 
     except ExpiredSignatureError as e:
         log_jwt_error(e)
@@ -96,7 +91,7 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
 
     required_claims = ['sub', 'iss', 'client_id', 'exp']
     for claim in required_claims:
-        if claim not in payload:
+        if claim not in payload or payload[claim] is None:
             raise HTTPException(
                 status_code=401,
                 detail={
@@ -104,6 +99,11 @@ def verify_access_token(request: Request, access_token: str, public_key: RSAPubl
                     'type': 'MissingClaimError'
                 }
             )
+
+    expected_client_id = request.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID
+
+    if payload.get('client_id') != expected_client_id:
+        raise HTTPException(status_code=401, detail={'error': 'Invalid client_id claim'})
 
     return payload
 
