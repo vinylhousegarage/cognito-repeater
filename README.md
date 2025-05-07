@@ -1,8 +1,8 @@
-## Cognito Repeater ( Cognito 認証中継アプリ )
+## Cognito Repeater ( Cognito 認証中継 API )
 
 ### 1. 概要
   - **目的**
-    - 本アプリは、AWS Cognito が発行する access_token の署名および標準クレームの検証を目的としています。
+    - 本 API は、AWS Cognito が発行する access_token の署名および標準クレームの検証を目的としています。
 
   - **提供機能**
     - Cognito へのログインおよびログアウト
@@ -22,7 +22,7 @@
     - GET /user：Cognito の userinfo エンドポイントを呼び出し、ユーザーアカウントが有効であれば sub を返します。
     - GET /logout：Cognito からログアウトし、ログアウトページにリダイレクトします。
     - GET /docs：Swagger UI 仕様の GUI ドキュメントを返します。
-    - GET /redoc：ReDoc 形式 のドキュメントを返します。
+    - GET /redoc：ReDoc 形式のドキュメントを返します。
     - GET /openapi.json：OpenAPI 仕様の JSON ファイルを返します。
 
   - **以下のエンドポイントでは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。**
@@ -48,19 +48,18 @@
       - 開発環境：Docker で Dockerコンテナを起動
       - 本番環境：AWS Lambda で Dockerイメージを使用
     - テスト環境：GitHub Actions
-    - ソースコードのローカルバージョン管理：Git
+    - ローカル環境のバージョン管理：Git
     - リモートリポジトリのホスティング：GitHub
     - CI/CD：GitHub Actions
 
   - **インフラ構成**
-    - 開発環境サーバー：Uvicorn
-    - アプリのホスティング：AWS
-      - アプリ実行：Lambda
-      - イメージ管理：ECR
-      - ハンドラー：Mangum
-      - API Gateway：HTTP API
-      - 構成管理：SSM ( パラメータストア )
-      - ドメイン・DNS管理：Route 53
+    - API 実行クラウド：AWS
+    - API 実行環境：Lambda
+    - イメージ管理：ECR
+    - ハンドラー：Mangum
+    - API Gateway：HTTP API
+    - 構成管理：SSM ( パラメータストア )
+    - ドメイン・DNS管理：Route 53
 
 ### 5. アクセス情報
   - **GitHubリポジトリURL**
@@ -69,4 +68,4 @@
     - [https://cognito-repeater.com](https://cognito-repeater.com)
 
 ### 6. ライセンス
-  - このアプリは [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
+  - この API は [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
