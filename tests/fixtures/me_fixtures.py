@@ -30,7 +30,7 @@ def test_claims():
     return {
         'sub': 'user-id',
         'iss': 'https://example.com',
-        'aud': 'user-pool-client-id',
+        'client_id': 'user-pool-client-id',
         'exp': int((datetime.now(timezone.utc) + timedelta(minutes=5)).timestamp()),
     }
 

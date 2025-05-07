@@ -123,7 +123,7 @@ def dummy_claims(dummy_request_for_verify):
     return {
         'sub': 'user-id',
         'iss': dummy_request_for_verify.app.state.metadata['issuer'],
-        'aud': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
+        'client_id': dummy_request_for_verify.app.state.config.AWS_COGNITO_USER_POOL_CLIENT_ID,
         'exp': datetime.now(timezone.utc) + timedelta(minutes=5)
     }
 
@@ -154,10 +154,9 @@ def dummy_payload_factory(
         dummy_payload = jwt.decode(
             dummy_access_token,
             dummy_public_key_for_verify,
-            algorithms = ['RS256'],
-            audience = dummy_claims['aud'],
-            issuer = dummy_claims['iss'],
-            options={'verify_exp': True, 'leeway': dummy_leeway},
+            algorithms=['RS256'],
+            issuer=dummy_claims['iss'],
+            options={'verify_exp': True, 'leeway': dummy_leeway, 'verify_aud': False},
         )
         return dummy_payload
     return _create_dummy_payload
