@@ -1,37 +1,72 @@
-# Cognito Repeater（Cognito 認証中継 API）
+## Cognito Repeater ( Cognito 認証中継アプリ )
 
-## 概要
+### 1. 概要
+  - **目的**
+    - 本アプリは、AWS Cognito が発行する access_token の署名および標準クレームの検証を目的としています。
 
-本 API は、AWS Cognito が発行する access_token の署名および標準クレームを検証する機能と、各種ユーティリティエンドポイントを提供します。
+  - **提供機能**
+    - Cognito へのログインおよびログアウト
+    - access_token の署名および標準クレーム（iss・aud・exp）の検証
+    - ユーザーアカウントの有効確認
 
-## ルートURL
- https://cognito-repeater.com
+### 2. ルートURL
+  - ### [https://cognito-repeater.com](https://cognito-repeater.com)
+  - ルートURL へのアクセスは /login にリダイレクトされます。
 
-※ 以下のすべてのエンドポイントは、ルートURL に対する相対パスです。
+### 3. エンドポイント
+  - **すべてのエンドポイントは、ルートURL に対する相対パスです。**
 
-## エンドポイント
+    - GET /metadata：本 API で提供されているエンドポイントの一覧を返します。
+    - GET /login：Cognito のログイン画面にリダイレクトします。
+    - GET /token：access_token の署名および標準クレーム（iss, aud, exp）を検証し、正当であれば sub を返します。
+    - GET /user：Cognito の userinfo エンドポイントを呼び出し、ユーザーアカウントが有効であれば sub を返します。
+    - GET /logout：Cognito からログアウトし、ログアウトページにリダイレクトします。
+    - GET /docs：Swagger UI 仕様の GUI ドキュメントを返します。
+    - GET /redoc：ReDoc 形式 のドキュメントを返します。
+    - GET /openapi.json：OpenAPI 仕様の JSON ファイルを返します。
 
-- GET /metadata：本 API で提供されているエンドポイントの一覧を返します。
-- GET /login：Cognito のログイン画面にリダイレクトします。
-- GET /me：access_token の署名および標準クレーム（iss, aud, exp）を検証し、正当であれば sub を返します。
-- GET /sub：Cognito の userinfo エンドポイントを呼び出し、ユーザーアカウントが有効であれば sub を返します。
-- GET /logout：Cognito からログアウトし、ログアウトページにリダイレクトします。
+  - **以下のエンドポイントでは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。**
 
-### Authorization ヘッダーが必要なエンドポイント
+    - GET /token
+    - GET /user
+    - GET /docs
+    - GET /redoc
+    - GET /openapi.json
 
-以下のエンドポイントでは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。
+  - **以下のエンドポイントでは、使用方法や仕様を確認できる自動生成ドキュメントを提供しています。**
 
-- /me
-- /sub
+    - GET /docs
+    - GET /redoc
+    - GET /openapi.json
 
-## API ドキュメント
+### 4. システム構成
+  - **技術スタック**
+    - プログラミング言語：Python 3.11
+    - フレームワーク：FastAPI 0.115.12
+    - 認証機能：AWS Cognito
+    - 仮想環境構築：Docker
+      - 開発環境：Docker で Dockerコンテナを起動
+      - 本番環境：AWS Lambda で Dockerイメージを使用
+    - テスト環境：GitHub Actions
+    - ソースコードのローカルバージョン管理：Git
+    - リモートリポジトリのホスティング：GitHub
+    - CI/CD：GitHub Actions
 
-本 API は、使用方法や仕様を確認できる自動生成ドキュメントを提供しています。
+  - **インフラ構成**
+    - 開発環境サーバー：Uvicorn
+    - アプリのホスティング：AWS
+      - アプリ実行：Lambda
+      - イメージ管理：ECR
+      - ハンドラー：Mangum
+      - API Gateway：HTTP API
+      - 構成管理：SSM ( パラメータストア )
+      - ドメイン・DNS管理：Route 53
 
-- /docs：Swagger UI 仕様の GUI ドキュメント
-- /redoc：ReDoc 形式 のドキュメント
-- /openapi.json：OpenAPI 仕様の JSON ファイル
+### 5. アクセス情報
+  - **GitHubリポジトリURL**
+    - [https://github.com/vinylhousegarage/cognito-repeater](https://github.com/vinylhousegarage/cognito-repeater)
+  - **アプリURL**
+    - [https://cognito-repeater.com](https://cognito-repeater.com)
 
-## ライセンス
-
-このアプリケーションは [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
+### 6. ライセンス
+  - このアプリは [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
