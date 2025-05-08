@@ -16,28 +16,34 @@
 ### 3. エンドポイント
   - **すべてのエンドポイントは、ルートURL に対する相対パスです。**
 
-    - GET /metadata：本 API で提供されているエンドポイントの一覧を返します。
-    - GET /login：Cognito のログイン画面にリダイレクトします。
-    - GET /token：access_token の署名および標準クレーム（iss, aud, exp）を検証し、正当であれば sub を返します。
-    - GET /user：Cognito の userinfo エンドポイントを呼び出し、ユーザーアカウントが有効であれば sub を返します。
-    - GET /logout：Cognito からログアウトし、ログアウトページにリダイレクトします。
-    - GET /docs：Swagger UI 仕様の GUI ドキュメントを返します。
-    - GET /redoc：ReDoc 形式のドキュメントを返します。
-    - GET /openapi.json：OpenAPI 仕様の JSON ファイルを返します。
+| メソッド | パス      | 用途                     |戻り値              |
+|-----|---------------|--------------------------|--------------------------|
+| GET | /metadata |本 API のエンドポイント一覧の取得|エンドポイント一覧|
+| GET | /login |Cognito のログイン画面にリダイレクト|リダイレクト|
+| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|sub (access_token が正当の場合)|
+| GET | /user |Cognito のユーザーアカウントの有効確認|sub (ユーザーアカウントが有効の場合)|
+| GET | /logout |Cognito からのログアウト処理およびリダイレクト|リダイレクト|
+| GET | /docs |本 API の GUI ドキュメントを取得|Swagger UI ドキュメント|
+| GET | /redoc |本 API の ReDoc 形式ドキュメントを取得|ReDoc 形式ドキュメント|
+| GET | /openapi.json |本 API の OpenAPI 仕様の JSON ファイルを取得|OpenAPI 仕様の JSON ファイル|
 
   - **以下のエンドポイントでは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。**
 
-    - GET /token
-    - GET /user
-    - GET /docs
-    - GET /redoc
-    - GET /openapi.json
+| メソッド | パス |
+|-----|----------|
+| GET | /token |
+| GET | /user |
+| GET | /docs |
+| GET | /redoc |
+| GET | /openapi.json |
 
   - **以下のエンドポイントでは、使用方法や仕様を確認できる自動生成ドキュメントを提供しています。**
 
-    - GET /docs
-    - GET /redoc
-    - GET /openapi.json
+| メソッド | パス |
+|-----|----------|
+| GET | /docs |
+| GET | /redoc |
+| GET | /openapi.json |
 
 ### 4. システム構成
   - **技術スタック**
