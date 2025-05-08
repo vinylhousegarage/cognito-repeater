@@ -1,4 +1,4 @@
-## Cognito Repeater ( Cognito 認証中継 API )
+## Cognito Repeater ( Cognito 認証・中継 API )
 
 ### 1. 概要
   - **目的**
