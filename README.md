@@ -2,7 +2,7 @@
 
 ### 1. 概要
   - **目的**
-    - 本 API は、AWS Cognito が発行する access_token の署名および標準クレームの検証を目的としています。
+    - 本 API は、複数アプリ間で共通利用できるログイン機能を提供することを目的とし、AWS Cognito が発行する access_token の署名および標準クレームの検証を行います。
 
   - **提供機能**
     - Cognito へのログインおよびログアウト
@@ -11,39 +11,24 @@
 
 ### 2. ルートURL
   - ### [https://cognito-repeater.com](https://cognito-repeater.com)
-  - ルートURL へのアクセスは /login にリダイレクトされます。
+  -  ルートURL にアクセスすると自動的に /login に転送され、Cognito ログイン画面が表示されます。
 
 ### 3. エンドポイント
   - **すべてのエンドポイントは、ルートURL に対する相対パスです。**
+  - **認証指定欄が [ 要 ] のエンドポイントは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。**
 
-| メソッド | パス      | 用途                     |戻り値              |
-|-----|---------------|--------------------------|--------------------------|
-| GET | /metadata |本 API のエンドポイント一覧の取得|エンドポイント一覧|
-| GET | /login |Cognito のログイン画面にリダイレクト|リダイレクト|
-| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|sub (access_token が正当の場合)|
-| GET | /user |Cognito のユーザーアカウントの有効確認|sub (ユーザーアカウントが有効の場合)|
-| GET | /logout |Cognito からのログアウト処理およびリダイレクト|リダイレクト|
-| GET | /docs |本 API の GUI ドキュメントを取得|Swagger UI ドキュメント|
-| GET | /redoc |本 API の ReDoc 形式ドキュメントを取得|ReDoc 形式ドキュメント|
-| GET | /openapi.json |本 API の OpenAPI 仕様の JSON ファイルを取得|OpenAPI 仕様の JSON ファイル|
-
-  - **以下のエンドポイントでは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。**
-
-| メソッド | パス |
-|-----|----------|
-| GET | /token |
-| GET | /user |
-| GET | /docs |
-| GET | /redoc |
-| GET | /openapi.json |
-
-  - **以下のエンドポイントでは、使用方法や仕様を確認できる自動生成ドキュメントを提供しています。**
-
-| メソッド | パス |
-|-----|----------|
-| GET | /docs |
-| GET | /redoc |
-| GET | /openapi.json |
+| メソッド | パス      | 用途                     |認証指定|戻り値              |
+|-----|---------------|--------------------------|----|----------------------|
+| GET | /metadata |本 API のエンドポイント一覧の取得||各エンドポイントのパスを格納した JSON オブジェクト|
+| GET | /health |本 API の稼働確認||{"status": "ok"}|
+| GET | /error/404 |本 API の 404 エラーの動作確認||HTTP 404 ({"detail": "This is a test 404"})|
+| GET | /login |Cognito へのログイン処理||Cognito のログイン画面へリダイレクト|
+| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|要|{"sub": "<トークン識別子>"}|
+| GET | /user |Cognito のユーザーアカウントの有効確認|要|{"sub": "<ユーザー識別子>"}|
+| GET | /logout |Cognito からのログアウト処理||{"message": "Logout successful"}|
+| GET | /docs |本 API の GUI ドキュメントの取得|要|Swagger UI ドキュメント|
+| GET | /redoc |本 API の ReDoc 形式ドキュメントの取得|要|ReDoc 形式ドキュメント|
+| GET | /openapi.json |本 API の OpenAPI 仕様の取得|要|OpenAPI 仕様の JSON ファイル|
 
 ### 4. システム構成
   - **技術スタック**
@@ -51,7 +36,7 @@
     - フレームワーク：FastAPI 0.115.12
     - 認証機能：AWS Cognito
     - 仮想環境構築：Docker
-      - 開発環境：Docker で Dockerコンテナを起動
+      - 開発環境：Docker でコンテナを起動
       - 本番環境：AWS Lambda で Dockerイメージを使用
     - テスト環境：GitHub Actions
     - ローカル環境のバージョン管理：Git
