@@ -1,13 +1,13 @@
-## Cognito Repeater ( Cognito 認証・中継 API )
+## Cognito Repeater ( AWS Cognito 認証・中継 API )
 
 ### 1. 概要
   - **目的**
     - 本 API は、複数アプリ間で共通利用できるログイン機能を提供することを目的としています。
 
   - **提供機能**
-    - Cognito へのログインおよびログアウト
-    - access_token の署名および標準クレーム（iss・aud・exp）の検証
-    - ユーザーアカウントの有効確認
+    - AWS Cognito へのログインおよびログアウト
+    - AWS Cognito が発行する access_token の署名および標準クレーム（iss・aud・exp）の検証
+    - AWS Cognito で認証されたユーザーアカウントの有効確認
 
 ### 2. ルートURL
   - ### [https://cognito-repeater.com](https://cognito-repeater.com)
@@ -15,7 +15,7 @@
 
 ### 3. エンドポイント
   - すべてのエンドポイントは、ルートURL に対する相対パスです。
-  - 認証指定欄が [ 要 ] のエンドポイントは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。
+  - 認証指定欄が『必要』のエンドポイントは、Authorization ヘッダーに Bearer <access_token> を指定する必要があります。
 
 | メソッド | パス      | 用途                     |認証指定|戻り値              |
 |-----|---------------|--------------------------|----|----------------------|
@@ -23,12 +23,12 @@
 | GET | /health |本 API の稼働確認||{"status": "ok"}|
 | GET | /error/404 |本 API の 404 エラーの動作確認||HTTP 404 ({"detail": "This is a test 404"})|
 | GET | /login |Cognito へのログイン処理||Cognito のログイン画面へリダイレクト|
-| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|要|{"sub": "<トークン識別子>"}|
-| GET | /user |Cognito のユーザーアカウントの有効確認|要|{"sub": "<ユーザー識別子>"}|
+| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|必要|{"sub": "<UUID形式のユーザーID>"}|
+| GET | /user |Cognito のユーザーアカウントの有効確認|必要|{"sub": "<UUID形式のユーザーID>"}|
 | GET | /logout |Cognito からのログアウト処理||{"message": "Logout successful"}|
-| GET | /docs |本 API の GUI ドキュメントの取得|要|Swagger UI ドキュメント|
-| GET | /redoc |本 API の ReDoc 形式ドキュメントの取得|要|ReDoc 形式ドキュメント|
-| GET | /openapi.json |本 API の OpenAPI 仕様の取得|要|OpenAPI 仕様の JSON ファイル|
+| GET | /docs |本 API の GUI ドキュメントの取得|必要|Swagger UI ドキュメント|
+| GET | /redoc |本 API の ReDoc 形式ドキュメントの取得|必要|ReDoc 形式ドキュメント|
+| GET | /openapi.json |本 API の OpenAPI 仕様の取得|必要|OpenAPI 仕様の JSON ファイル|
 
 ### 4. システム構成
   - **技術スタック**
