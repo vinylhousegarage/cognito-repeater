@@ -23,8 +23,8 @@
 | GET | /health |本 API の稼働確認||{"status": "ok"}|
 | GET | /error/404 |本 API の 404 エラーの動作確認||HTTP 404 ({"detail": "This is a test 404"})|
 | GET | /login |Cognito へのログイン処理||Cognito のログイン画面へリダイレクト|
-| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|必要|{"sub": "<UUID形式のユーザーID>"}|
-| GET | /user |Cognito のユーザーアカウントの有効確認|必要|{"sub": "<UUID形式のユーザーID>"}|
+| GET | /token |署名および標準クレーム (iss・aud・exp) の検証|必要|{"sub": "&lt;UUID形式のユーザーID&gt;"}|
+| GET | /user |Cognito のユーザーアカウントの有効確認|必要|{"sub": "&lt;UUID形式のユーザーID&gt;"}|
 | GET | /logout |Cognito からのログアウト処理||{"message": "Logout successful"}|
 | GET | /docs |本 API の GUI ドキュメントの取得|必要|Swagger UI ドキュメント|
 | GET | /redoc |本 API の ReDoc 形式ドキュメントの取得|必要|ReDoc 形式ドキュメント|
