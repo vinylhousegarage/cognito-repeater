@@ -59,4 +59,4 @@
     - [https://cognito-repeater.com](https://cognito-repeater.com)
 
 ### 6. ライセンス
-  - この API は [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
+  - 本 API は [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
