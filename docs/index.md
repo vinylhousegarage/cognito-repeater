@@ -55,7 +55,7 @@
 ### 5. アクセス情報
   - **GitHubリポジトリURL**
     - [https://github.com/vinylhousegarage/cognito-repeater](https://github.com/vinylhousegarage/cognito-repeater)
-  - **アプリURL**
+  - **APIエンドポイント**
     - [https://cognito-repeater.com](https://cognito-repeater.com)
 
 ### 6. ライセンス
