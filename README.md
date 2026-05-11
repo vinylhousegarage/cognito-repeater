@@ -52,11 +52,5 @@
     - 構成管理：SSM ( パラメータストア )
     - ドメイン・DNS管理：Route 53
 
-### 5. アクセス情報
-  - **GitHubリポジトリURL**
-    - [https://github.com/vinylhousegarage/cognito-repeater](https://github.com/vinylhousegarage/cognito-repeater)
-  - **APIエンドポイント**
-    - [https://cognito-repeater.com](https://cognito-repeater.com)
-
-### 6. ライセンス
+### 5. ライセンス
   - 本 API は [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
