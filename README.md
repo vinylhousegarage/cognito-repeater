@@ -32,25 +32,28 @@
 
 ### 4. システム構成
   - **技術スタック**
-    - プログラミング言語：Python 3.11.11
-    - フレームワーク：FastAPI 0.115.12
-    - 認証機能：AWS Cognito
-    - 仮想環境構築：Docker
-      - 開発環境：Docker でコンテナを起動
-      - 本番環境：AWS Lambda で Dockerイメージを使用
-    - テスト環境：GitHub Actions
-    - ローカル環境のバージョン管理：Git
-    - リモートリポジトリのホスティング：GitHub
-    - CI/CD：GitHub Actions
+    | カテゴリー | 選定技術 |
+    | --- | --- |
+    | 開発言語 | Python 3.11.11 |
+    | フレームワーク | FastAPI 0.115.12 |
+    | ソース管理 | Git |
+    | リポジトリ | GitHub |
+    | CI/CD | GitHub Actions |
+    | 開発環境 | Docker |
 
-  - **インフラ構成**
-    - API 実行クラウド：AWS
-    - API 実行環境：Lambda
-    - イメージ管理：ECR
-    - ハンドラー：Mangum
-    - API Gateway：HTTP API
-    - 構成管理：SSM ( パラメータストア )
-    - ドメイン・DNS管理：Route 53
+  - **インフラ構成（AWS）**
+    | コンポーネント | 採用サービス・ツール |
+    | :--- | :--- |
+    | ドメイン登録 | Route 53 |
+    | DNS管理 | Route 53 |
+    | 証明書管理 | ACM |
+    | API接点 | API Gateway |
+    | APIタイプ | HTTP API |
+    | 認証基盤 | Cognito |
+    | 実行基盤 | Lambda |
+    | 変換アダプター | Mangum |
+    | 秘匿情報管理 | SSM Parameter Store（SecureString） |
+    | イメージ管理 | ECR |
 
 ### 5. ライセンス
   - 本 API は [MIT License](https://opensource.org/licenses/MIT) のもとで公開されています。
